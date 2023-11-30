@@ -1,0 +1,52 @@
+name: onetwoday
+description: A new Flutter project.
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.1.0 <4.0.0'
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+# -------------------------------------------------- #
+  cupertino_icons: ^1.0.2
+  lottie: ^2.7.0
+  firebase_core: ^2.22.0
+  firebase_auth: ^4.14.0
+  flutter_native_splash: ^2.3.5
+  firebase_storage: ^11.5.1
+  loading_animation_widget: ^1.2.0+4
+  image_picker: ^1.0.4
+# -------------------------------------------------- #
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/lotties/
+
+  fonts:
+    - family: NotoSansKR
+      fonts:
+        - asset: assets/fonts/NotoSansKR-Black.ttf
+        - asset: assets/fonts/NotoSansKR-Bold.ttf
+        - asset: assets/fonts/NotoSansKR-ExtraBold.ttf
+        - asset: assets/fonts/NotoSansKR-ExtraLight.ttf
+        - asset: assets/fonts/NotoSansKR-Light.ttf
+        - asset: assets/fonts/NotoSansKR-Medium.ttf
+        - asset: assets/fonts/NotoSansKR-Regular.ttf
+        - asset: assets/fonts/NotoSansKR-SemiBold.ttf
+        - asset: assets/fonts/NotoSansKR-Thin.ttf
