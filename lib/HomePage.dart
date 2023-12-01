@@ -1,7 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:onetwoday/HomeBody.dart';
-import 'package:onetwoday/MyAppBar.dart';
-import 'package:onetwoday/ProfileDrawer.dart';
+import 'Tools/Color/Colors.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,25 +15,33 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(
-        appBar: AppBar(),
-        title: "OneTwoDay",
-      ),
-      drawer: ProfileDrawer(),
-      body: HomeBody(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => {},
-        child: Icon(
-          Icons.calendar_today,
-          color: Color(0xff6d8aa1),
-          size: 35,
+      appBar: AppBar(
+        centerTitle: false,
+        toolbarHeight: 67,
+        leading: Container(
+          margin: EdgeInsets.only(left: 10, bottom: 12.0, top: 12),
+          padding: EdgeInsets.only(top: 6.0, bottom: 6.0),
+          child: Image.asset(
+            'assets/images/splash_icon.png',
+            fit: BoxFit.contain,
+          ),
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        hoverColor: Color(0xfff2f2f2),
-        hoverElevation: 0,
-        highlightElevation: 0,
+        titleSpacing: 4,
+        title: Container(
+          margin: EdgeInsets.only(bottom: 3),
+          child: Text(
+            "원투데이",
+            style: TextStyle(
+              color: MainColors.blue,
+              fontFamily: 'NPSfont',
+              fontSize: 27
+            ),
+          ),
+        ),
+        backgroundColor: MainColors.background,
+        shadowColor: Colors.transparent,
       ),
+      body: HomeBody(),
     );
   }
 }

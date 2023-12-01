@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import './Tools/Color/Colors.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MyAppBar({super.key, required this.appBar, required this.title});
@@ -12,11 +13,13 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.transparent,
       shadowColor: Colors.transparent,
       centerTitle: true,
-      title: Text(
-        title,
-        style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold),
+      title: Container(
+        child: Text(
+          title,
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
       ),
-      iconTheme: IconThemeData(color: Colors.black54),
+      iconTheme: IconThemeData(color: MainColors.blue),
     );
   }
 

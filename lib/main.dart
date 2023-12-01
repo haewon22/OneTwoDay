@@ -14,13 +14,9 @@ import 'ChangeEmail.dart';
 import 'ChangePW.dart';
 import 'CreateRoom.dart';
 import 'EnterRoom.dart';
-import 'GridViewCount.dart';
 import 'HomeBody.dart';
-import 'HomeGridview.dart';
 import 'HomePage.dart';
-import 'ProfileDrawer.dart';
-import 'test.dart';
-import 'Stateful.dart';
+import 'Calendar/Calendar.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,18 +40,14 @@ class MyApp extends StatelessWidget {
         '/signupform': (BuildContext ctx) => SignUpForm(),
         '/profileform': (BuildContext ctx) => ProfileForm(),
         '/forgotpw': (BuildContext ctx) => ForgotPW(),
-        '/stateful': (BuildContext ctx) => Stateful(),
         '/accountsettings': (BuildContext ctx) => AccountSettings(),
         '/changeemail': (BuildContext ctx) => ChangeEmail(),
         '/changepw': (BuildContext ctx) => ChangePW(),
         '/createroom': (BuildContext ctx) => CreateRoom(),
         '/enterroom': (BuildContext ctx) => EnterRoom(),
-        '/gridviewcount': (BuildContext ctx) => GridViewCount(),
         '/homebody': (BuildContext ctx) => HomeBody(),
-        '/homegridview': (BuildContext ctx) => HomeGridView(),
         '/homepage': (BuildContext ctx) => HomePage(),
-        '/profiledrawer': (BuildContext ctx) => ProfileDrawer(),
-        '/test': (BuildContext ctx) => test(),
+        '/calendar': (BuildContext ctx) => Calendar(),
       },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

@@ -22,6 +22,7 @@ dependencies:
   firebase_storage: ^11.5.1
   loading_animation_widget: ^1.2.0+4
   image_picker: ^1.0.4
+  table_calendar: ^3.0.9
 # -------------------------------------------------- #
 
 dev_dependencies:
@@ -50,3 +51,11 @@ flutter:
         - asset: assets/fonts/NotoSansKR-Regular.ttf
         - asset: assets/fonts/NotoSansKR-SemiBold.ttf
         - asset: assets/fonts/NotoSansKR-Thin.ttf
+  
+    - family: NanumSquareRound
+      fonts:
+        - asset: assets/fonts/NanumSquareRoundR.ttf
+
+    - family: NPSfont
+      fonts:
+        - asset: assets/fonts/NPSfont_extrabold.ttf

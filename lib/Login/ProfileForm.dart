@@ -98,9 +98,9 @@ class ProfileFormState extends State<ProfileForm> {
                   alignment: Alignment.bottomRight,
                   children: [
                     CircleAvatar(
-                      backgroundColor: MainColors.background,
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: Colors.transparent,
                       foregroundImage: NetworkImage(_imageURL),
-                      foregroundColor: MainColors.background,
                       radius: mediaSize.width / 4,
                       child: LoadingAnimationWidget.beat(
                         color: Colors.grey,
@@ -201,6 +201,10 @@ class ProfileFormState extends State<ProfileForm> {
     if (value.isEmpty) {
       _isValidated = false;
       return "이름을 입력하세요";
+    }
+    if (value.length > 4) {
+      _isValidated = false;
+      return "이름은 4자 이하로 입력하세요";
     }
     setState(() {
       _isValidated = true;
