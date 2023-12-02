@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:onetwoday/Tools/Color/Colors.dart';
 import 'package:onetwoday/MyAppBar.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class AccountSettings extends StatefulWidget {
   const AccountSettings({super.key});
@@ -9,8 +12,7 @@ class AccountSettings extends StatefulWidget {
 }
 
 class _AccountSettingsState extends State<AccountSettings> {
-  String email = 'haewon20430@cau.ac.kr';
-  String name = '정해원';
+  final user = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
     var mediaSize = MediaQuery.of(context).size;
@@ -22,49 +24,37 @@ class _AccountSettingsState extends State<AccountSettings> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Container(
-                margin: EdgeInsets.only(top: 15),
+                margin: EdgeInsets.fromLTRB(0, 15, 0, 50),
                 child: Text(
                   "계정 설정",
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800),
                 ),
               ),
-              Container(
-                padding: EdgeInsets.only(top: 20),
-                child: Stack(
-                  alignment: Alignment.bottomRight,
-                  children: [
-                    Icon(
-                      Icons.account_circle,
-                      color: Color(0xff6d8aa1),
-                      size: 150,
-                    ),
-                    Positioned(
-                      right: 15,
-                      bottom: 15,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.black54,
-                        radius: 15,
-                        child: Icon(
-                          Icons.camera_alt,
-                          size: 16,
-                          color: Colors.white,
-                        ),
-                      ),
-                    )
-                  ],
+              CircleAvatar(
+                backgroundColor: Colors.transparent,
+                foregroundColor: Colors.transparent,
+                foregroundImage: NetworkImage(user?.photoURL ?? "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/profileImage%2Fdefault_profile.png?alt=media&token=43f4fbbd-6a2a-48e9-a9e9-dbce114cf4c9"),
+                radius: mediaSize.width / 5,
+                child: LoadingAnimationWidget.beat(
+                  color: Colors.grey,
+                  size: 50,
                 ),
               ),
-              SizedBox(
+              Container(
+                margin: EdgeInsets.fromLTRB(0, 10, 0, 20),
                 child: Text(
-                  name,
-                  style: TextStyle(fontSize: 20),
+                  user?.displayName ?? "Unknown",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700
+                  ),
                 ),
               ),
               Container(
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(50),
                     color: Colors.white),
-                margin: EdgeInsets.fromLTRB(30, 30, 30, 10),
+                margin: EdgeInsets.fromLTRB(30, 30, 30, 20),
                 padding: EdgeInsets.only(left: 17),
                 child: GestureDetector(
                   onTap: () {
@@ -72,10 +62,17 @@ class _AccountSettingsState extends State<AccountSettings> {
                   },
                   child: ListTile(
                     minLeadingWidth: 70,
-                    leading: Text("Email"),
+                    leading: Text(
+                      "이메일 변경",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500
+                      )
+                    ),
+                    titleAlignment: ListTileTitleAlignment.center,
                     title: Text(
-                      email,
-                      style: TextStyle(fontSize: 14),
+                      user?.email ?? "Unknown",
+                      style: TextStyle(fontSize: 13),
                       textAlign: TextAlign.end,
                     ),
                     trailing: Icon(Icons.arrow_forward_ios, size: 14),
@@ -86,119 +83,130 @@ class _AccountSettingsState extends State<AccountSettings> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(50),
                     color: Colors.white),
-                margin: EdgeInsets.fromLTRB(30, 0, 30, 10),
+                margin: EdgeInsets.fromLTRB(30, 0, 30, 20),
                 padding: EdgeInsets.only(left: 14),
                 child: GestureDetector(
                   onTap: () {
                     Navigator.of(context).pushNamed('/changepw');
                   },
                   child: ListTile(
-                    leading: Text("비밀번호"),
+                    leading: Text(
+                      "비밀번호 변경",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500
+                      )
+                    ),
                     trailing: Icon(Icons.arrow_forward_ios, size: 14),
                   ),
                 ),
               ),
-              Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    color: Colors.white),
-                margin: EdgeInsets.fromLTRB(30, 0, 30, 10),
-                padding: EdgeInsets.only(left: 14),
-                child: ListTile(
-                  leading: GestureDetector(
-                    onTap: () {
-                      showDialog<String>(
-                          context: context,
-                          builder: (BuildContext context) => AlertDialog(
-                                backgroundColor: Color(0xfff2f2f2),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(30))),
-                                title: Text(
-                                  '정말 탈퇴하시겠습니까?',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                contentPadding: EdgeInsets.only(top: 30),
-                                content: Builder(
-                                  builder: (context) {
-                                    var height =
-                                        MediaQuery.of(context).size.height;
-                                    var width =
-                                        MediaQuery.of(context).size.width;
-
-                                    return Container(
-                                      alignment: Alignment.topCenter,
-                                      child: Text(
-                                        "탈퇴 시 계정의 모든 정보는 삭제되며\n다시 복구 할 수 없습니다.",
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      height: height - 600,
-                                      width: width - 400,
-                                    );
-                                  },
-                                ),
-                                actionsAlignment: MainAxisAlignment.center,
-                                actions: [
-                                  Column(
-                                    children: [
-                                      Container(
-                                        margin:
-                                            EdgeInsets.fromLTRB(10, 0, 10, 10),
-                                        width:
-                                            MediaQuery.of(context).size.width -
-                                                100,
-                                        height: 50,
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            "탈퇴",
-                                            textAlign: TextAlign.center,
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                          decoration: BoxDecoration(
-                                              color: Color(0xff6d8aa1),
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(10))),
-                                        ),
-                                      ),
-                                      Container(
-                                        margin:
-                                            EdgeInsets.fromLTRB(10, 0, 10, 10),
-                                        width:
-                                            MediaQuery.of(context).size.width -
-                                                100,
-                                        height: 50,
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            "취소",
-                                            textAlign: TextAlign.center,
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                          ),
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(10))),
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ));
+              GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Column(
+                          children: [
+                            Text(
+                              "정말로 탈퇴하시나요?",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                              ),
+                            )
+                          ],
+                        ),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "탈퇴 시 계정의 모든 정보는 삭제되고\n다시 복구 할 수 없어요",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 15,
+                              ),
+                            )
+                          ],
+                        ),
+                        actions: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Container(
+                                  width: mediaSize.width/4,
+                                  height: 40,
+                                  margin: EdgeInsets.fromLTRB(30, 10, 10, 10),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey,
+                                    borderRadius: BorderRadius.circular(55)
+                                  ),
+                                  child: Text(
+                                    "취소",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700
+                                    )
+                                  ),
+                                )
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  FirebaseAuth.instance.signOut();
+                                  Navigator.of(context).pushNamedAndRemoveUntil('/signin', (route) => false);
+                                },
+                                child: Container(
+                                  width: mediaSize.width/4,
+                                  height: 40,
+                                  margin: EdgeInsets.fromLTRB(10, 10, 30, 10),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(55)
+                                  ),
+                                  child: Text(
+                                    "탈퇴",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700
+                                    )
+                                  ),
+                                )
+                              ),
+                            ],
+                          )
+                        ],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25)
+                        ),
+                      );
                     },
-                    child: Text(
-                      "계정탈퇴",
-                      style: TextStyle(color: Colors.redAccent),
+                  );
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      color: Colors.white),
+                  margin: EdgeInsets.fromLTRB(30, 0, 30, 10),
+                  padding: EdgeInsets.only(left: 14),
+                  child: ListTile(
+                    leading: Text(
+                      "계정 탈퇴",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.red
+                      )
                     ),
+                    trailing: Icon(Icons.arrow_forward_ios, size: 14),
                   ),
-                  trailing: Icon(Icons.arrow_forward_ios, size: 14),
                 ),
-              ),
+              )
             ],
           ),
         ],

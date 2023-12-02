@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:onetwoday/Tools/Color/Colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'ProfileDrawer.dart';
 
 enum SampleItem { create, enter }
 
@@ -50,237 +52,18 @@ class _HomeBodyState extends State<HomeBody> {
                         radius: 30,
                         backgroundColor: Colors.transparent,
                         foregroundColor: Colors.transparent,
-                        backgroundImage: NetworkImage(user?.photoURL ?? "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/profileImage%2Fdefault_profile.png?alt=media&token=43f4fbbd-6a2a-48e9-a9e9-dbce114cf4c9"),
+                        foregroundImage: NetworkImage(user?.photoURL ?? "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/profileImage%2Fdefault_profile.png?alt=media&token=43f4fbbd-6a2a-48e9-a9e9-dbce114cf4c9"),
+                        child: LoadingAnimationWidget.beat(
+                          color: Colors.grey,
+                          size: 30,
+                        ),
                       ),
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        GestureDetector(
-                          child: Row(
-                            children: [
-                              Text(
-                                user?.displayName ?? "Unknown",
-                                style: TextStyle(
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.w900
-                                )
-                              ),
-                              Text(
-                                " 님",
-                                style: TextStyle(fontSize: 25),
-                              ),
-                              Text(
-                                "   >",
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            ],
-                          ),
-                          onTap: () {
-                            showModalBottomSheet(
-                              backgroundColor: Colors.transparent,
-                              isScrollControlled: true,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return Container(
-                                  height: 450,
-                                  decoration: BoxDecoration(
-                                    color: MainColors.background,
-                                    borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(50)
-                                    )
-                                  ),
-                                  child: Center(
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.only(top: 80, bottom: 10),
-                                          child: CircleAvatar(
-                                            backgroundColor: Colors.transparent,
-                                            foregroundColor: Colors.transparent,
-                                            foregroundImage: NetworkImage(user?.photoURL ?? "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/profileImage%2Fdefault_profile.png?alt=media&token=43f4fbbd-6a2a-48e9-a9e9-dbce114cf4c9"),
-                                            radius: mediaSize.width / 5,
-                                          ),
-                                        ),
-                                        Text(
-                                          user?.displayName ?? "Unknown",
-                                          style: TextStyle(
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.w900
-                                          )
-                                        ),
-                                        Expanded(
-                                          child: Container(
-                                            margin: EdgeInsets.only(bottom: 45),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    Navigator.of(context).pushNamed('/accountsettings');
-                                                  },
-                                                  child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.end,
-                                                    children: [
-                                                      Padding(
-                                                        padding: EdgeInsets.all(6.0),
-                                                        child: Icon(
-                                                          Icons.settings,
-                                                          size: 30,
-                                                          color: MainColors.blue,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        "계정 설정",
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.w500,
-                                                          color:MainColors.blue
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                Column(
-                                                  mainAxisAlignment: MainAxisAlignment.end,
-                                                  children: [
-                                                    Padding(
-                                                      padding: EdgeInsets.all(6.0),
-                                                      child: Icon(
-                                                        Icons.edit,
-                                                        size: 30,
-                                                        color: MainColors.blue
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      "프로필 편집",
-                                                      style: TextStyle(
-                                                        fontWeight: FontWeight.w500,
-                                                        color: MainColors.blue
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext context) {
-                                                        return AlertDialog(
-                                                          title: Column(
-                                                            children: [
-                                                              Text(
-                                                                "정말로 로그아웃 하시나요?",
-                                                                style: TextStyle(
-                                                                  fontWeight: FontWeight.w900,
-                                                                ),
-                                                              )
-                                                            ],
-                                                          ),
-                                                          content: Column(
-                                                            mainAxisSize: MainAxisSize.min,
-                                                            children: [
-                                                              Text(
-                                                                "언제든 원투데이에 다시 돌아와주세요",
-                                                                textAlign: TextAlign.center,
-                                                                style: TextStyle(
-                                                                  fontSize: 15,
-                                                                ),
-                                                              )
-                                                            ],
-                                                          ),
-                                                          actions: <Widget>[
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: [
-                                                                GestureDetector(
-                                                                  onTap: () {
-                                                                    Navigator.of(context).pop();
-                                                                  },
-                                                                  child: Container(
-                                                                    width: mediaSize.width/4,
-                                                                    height: 40,
-                                                                    margin: EdgeInsets.fromLTRB(30, 10, 10, 10),
-                                                                    alignment: Alignment.center,
-                                                                    decoration: BoxDecoration(
-                                                                      color: Colors.grey,
-                                                                      borderRadius: BorderRadius.circular(55)
-                                                                    ),
-                                                                    child: Text(
-                                                                      "취소",
-                                                                      style: TextStyle(
-                                                                        color: Colors.white,
-                                                                        fontWeight: FontWeight.w700
-                                                                      )
-                                                                    ),
-                                                                  )
-                                                                ),
-                                                                GestureDetector(
-                                                                  onTap: () {
-                                                                    FirebaseAuth.instance.signOut();
-                                                                    Navigator.of(context).pushNamedAndRemoveUntil('/signin', (route) => false);
-                                                                  },
-                                                                  child: Container(
-                                                                    width: mediaSize.width/4,
-                                                                    height: 40,
-                                                                    margin: EdgeInsets.fromLTRB(10, 10, 30, 10),
-                                                                    alignment: Alignment.center,
-                                                                    decoration: BoxDecoration(
-                                                                      color: MainColors.blue,
-                                                                      borderRadius: BorderRadius.circular(55)
-                                                                    ),
-                                                                    child: Text(
-                                                                      "확인",
-                                                                      style: TextStyle(
-                                                                        color: Colors.white,
-                                                                        fontWeight: FontWeight.w700
-                                                                      )
-                                                                    ),
-                                                                  )
-                                                                ),
-                                                              ],
-                                                            )
-                                                          ],
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(25)
-                                                          ),
-                                                        );
-                                                      },
-                                                    );
-                                                  },
-                                                  child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.end,
-                                                    children: [
-                                                      Padding(
-                                                        padding: const EdgeInsets.all(6.0),
-                                                        child: Icon(
-                                                          Icons.logout,
-                                                          size: 30,
-                                                          color: MainColors.blue
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        "로그아웃",
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.w500,
-                                                          color: MainColors.blue
-                                                        ),
-                                                      )
-                                                    ],
-                                                  )
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }
-                            );
-                          },
-                        ),
+                        ProfileDrawer(),
                         Text(
                           "원투데이에 오신 걸 환영해요",
                           style: TextStyle(fontWeight: FontWeight.w500),
@@ -293,9 +76,28 @@ class _HomeBodyState extends State<HomeBody> {
                   onTap: () {
                     Navigator.of(context).pushNamed('/calendar');
                   },
-                  child: Image.asset(
-                    'assets/images/calendar_icon.png',
-                    height: 50,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.fromLTRB(0, 5, 5, 0),
+                        child: Image.asset(
+                          'assets/images/calendar_icon.png',
+                          height: 45,
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.fromLTRB(0, 5, 12, 0),
+                        child: Text(
+                          DateTime.now().day.toString(),
+                          style: TextStyle(
+                            color: MainColors.blue,
+                            fontFamily: "NPSfont",
+                            fontSize: 20
+                          )
+                        )
+                      )
+                    ],
                   )
                 )
               ],
@@ -304,7 +106,7 @@ class _HomeBodyState extends State<HomeBody> {
         ),
         Container(
           height: 60,
-          padding: EdgeInsets.fromLTRB(20, 20, 5, 0),
+          padding: EdgeInsets.fromLTRB(30, 20, 15, 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -386,14 +188,6 @@ class _HomeBodyState extends State<HomeBody> {
                   borderRadius: BorderRadius.circular(55),
                 ),
               ),
-              validator: (value) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  setState(() {
-                    if (!value!.isEmpty) _isFirstInput = false;
-                    _input = value!;
-                  });
-                });
-              },
             ),
           ),
           Icon(Icons.close)

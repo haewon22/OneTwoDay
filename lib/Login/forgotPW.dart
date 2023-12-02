@@ -70,11 +70,9 @@ class ForgotPWState extends State<ForgotPW> {
                       borderRadius: BorderRadius.circular(55),
                     ),
                   ),
-                  validator: (value) { 
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      setState(() {
-                        _input = value!;
-                      });
+                  onChanged: (String value) { 
+                    setState(() {
+                      _input = value!;
                     });
                   },
                 ),

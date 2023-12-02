@@ -74,12 +74,10 @@ class SignUpFormState extends State<SignUpForm> {
                       borderRadius: BorderRadius.circular(55),
                     ),
                   ),
-                  validator: (value) { 
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      setState(() {
-                        if (!value!.isEmpty) _isFirstInput['email'] = false;
-                        _input['email'] = value!;
-                      });
+                  onChanged: (String value) { 
+                    setState(() {
+                      if (!value!.isEmpty) _isFirstInput['email'] = false;
+                      _input['email'] = value!;
                     });
                   },
                 ),
@@ -219,12 +217,10 @@ class SignUpFormState extends State<SignUpForm> {
                   ),
                 ),
               ),
-              validator: (value) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  setState(() {
-                    if (!value!.isEmpty) _isFirstInput['pw'] = false;
-                    _input['pw'] = value!;
-                  });
+              onChanged: (String value) {
+                setState(() {
+                  if (!value!.isEmpty) _isFirstInput['pw'] = false;
+                  _input['pw'] = value!;
                 });
               },
             ),
@@ -273,12 +269,10 @@ class SignUpFormState extends State<SignUpForm> {
                   ),
                 ),
               ),
-              validator: (value) { 
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  setState(() {
-                    if (!value!.isEmpty) _isFirstInput['repw'] = false;
-                    _input['repw'] = value!;
-                  });
+              onChanged: (String value) { 
+                setState(() {
+                  if (!value!.isEmpty) _isFirstInput['repw'] = false;
+                  _input['repw'] = value!;
                 });
               },
             ),

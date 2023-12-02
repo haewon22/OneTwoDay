@@ -65,11 +65,9 @@ class SignInState extends State<SignIn> {
                       borderRadius: BorderRadius.circular(55),
                     ),
                   ),
-                  validator: (value) { 
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      setState(() {
-                        _input['email'] = value!;
-                      });
+                  onChanged: (String value) { 
+                    setState(() {
+                      _input['email'] = value!;
                     });
                   },
                 ),
@@ -107,11 +105,9 @@ class SignInState extends State<SignIn> {
                       ),
                     ),
                   ),
-                  validator: (value) { 
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      setState(() {
-                        _input['pw'] = value!;
-                      });
+                  onChanged: (String value) { 
+                    setState(() {
+                      _input['pw'] = value!;
                     });
                   },
                 ),

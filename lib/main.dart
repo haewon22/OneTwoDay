@@ -59,7 +59,6 @@ class MyApp extends StatelessWidget {
 
   bool isSignIn() {
     final user = FirebaseAuth.instance.currentUser;
-    print(user);
     return (user == null) ? false : true;
   }
 }

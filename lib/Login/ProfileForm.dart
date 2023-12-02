@@ -71,12 +71,10 @@ class ProfileFormState extends State<ProfileForm> {
                       borderRadius: BorderRadius.circular(55),
                     ),
                   ),
-                  validator: (value) { 
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      setState(() {
-                        if (!value!.isEmpty) _isFirstInput = false;
-                        _input = value!;
-                      });
+                  onChanged: (String value) { 
+                    setState(() {
+                      if (!value!.isEmpty) _isFirstInput = false;
+                      _input = value!;
                     });
                   },
                 ),
@@ -116,7 +114,7 @@ class ProfileFormState extends State<ProfileForm> {
                           final File file = File(pickedFile.path);
                           final user = await FirebaseAuth.instance.currentUser;
                           final storageRef = FirebaseStorage.instance.ref();
-                          final profileRef = storageRef.child("profileImage").child(user?.email ?? "unknown");
+                          final profileRef = storageRef.child("profileImage").child(user?.uid ?? "unknown");
 
                           await profileRef.putFile(file).snapshotEvents.listen((taskSnapshot) async {
                             switch (taskSnapshot.state) {

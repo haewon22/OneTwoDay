@@ -10,6 +10,11 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back_ios),
+        splashRadius: 0.1,
+        onPressed: () => Navigator.of(context).pop(),
+      ),
       backgroundColor: Colors.transparent,
       shadowColor: Colors.transparent,
       centerTitle: true,
