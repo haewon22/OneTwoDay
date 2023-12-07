@@ -4,6 +4,7 @@ import 'package:lottie/lottie.dart';
 class Loading {
   static void loadingPage(BuildContext context, double width) {
     showDialog(
+      barrierDismissible: false,
       barrierColor: Colors.white30,
       context: context,
       builder: (BuildContext context) {

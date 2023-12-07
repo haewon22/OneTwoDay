@@ -4,6 +4,9 @@ import 'package:onetwoday/MyAppBar.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Calendar extends StatefulWidget{
+  String calKey;
+  Calendar({required this.calKey});
+
   @override
   CalendarState createState() => CalendarState();
 }
@@ -21,18 +24,18 @@ class CalendarState extends State<Calendar> {
     return Scaffold(
       appBar: MyAppBar(
         appBar: AppBar(),
-        title: "캘린더",
+        title: "",
       ),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
             children: [
               Container(
-                margin: EdgeInsets.fromLTRB(25, 5, 25, 0),
+                margin: EdgeInsets.fromLTRB(25, 5, 25, 5),
                 child: Row(
                   children: [
                     Text(
-                      "내 캘린더 ",
+                      widget.calKey == "my" ? "내 캘린더 " : "firebase",
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.w900
@@ -98,12 +101,30 @@ class CalendarState extends State<Calendar> {
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey,
-                      blurRadius: 10,
-                      spreadRadius: -5
+                      blurRadius: 8,
+                      spreadRadius: -4
                     )
                   ]
                 ),
               ),
+              Container(
+                width: mediaSize.width,
+                height: 500, // delete
+                margin: EdgeInsets.fromLTRB(20, 5, 20, 20),
+                padding: EdgeInsets.all(25),
+                child: Text("여기에 일정들 표시, + 버튼"),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey,
+                      blurRadius: 8,
+                      spreadRadius: -4
+                    )
+                  ]
+                ),
+              )
             ],
           ),
         )

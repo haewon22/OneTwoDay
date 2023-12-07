@@ -7,11 +7,13 @@ class DialogForm {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: MainColors.background,
           title: Column(
             children: [
               Text(
                 title,
                 style: TextStyle(
+                  fontSize: 20,
                   fontWeight: FontWeight.w900,
                 ),
               )
@@ -24,7 +26,7 @@ class DialogForm {
                 content,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 14,
                 ),
               )
             ],

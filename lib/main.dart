@@ -16,7 +16,10 @@ import 'CreateRoom.dart';
 import 'EnterRoom.dart';
 import 'HomeBody.dart';
 import 'HomePage.dart';
-import 'Calendar/Calendar.dart';
+import 'Mychatting.dart';
+import 'Myboard.dart';
+import 'Mywriting.dart';
+import 'ChangeProfile.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,7 +50,10 @@ class MyApp extends StatelessWidget {
         '/enterroom': (BuildContext ctx) => EnterRoom(),
         '/homebody': (BuildContext ctx) => HomeBody(),
         '/homepage': (BuildContext ctx) => HomePage(),
-        '/calendar': (BuildContext ctx) => Calendar(),
+        '/mychatting': (BuildContext ctx) => Mychatting(),
+        '/myboard': (BuildContext ctx) => Myboard(),
+        '/mywriting': (BuildContext ctx) => Mywriting(),
+        '/changeprofile': (BuildContext ctx) => ChangePrifile(),
       },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

@@ -12,7 +12,8 @@ class AccountSettings extends StatefulWidget {
 }
 
 class _AccountSettingsState extends State<AccountSettings> {
-  final user = FirebaseAuth.instance.currentUser;
+  var user = FirebaseAuth.instance.currentUser;
+
   @override
   Widget build(BuildContext context) {
     var mediaSize = MediaQuery.of(context).size;
@@ -21,7 +22,7 @@ class _AccountSettingsState extends State<AccountSettings> {
       body: ListView(
         children: [
           Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
                 margin: EdgeInsets.fromLTRB(0, 15, 0, 50),
@@ -34,7 +35,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                 backgroundColor: Colors.transparent,
                 foregroundColor: Colors.transparent,
                 foregroundImage: NetworkImage(user?.photoURL ?? "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/profileImage%2Fdefault_profile.png?alt=media&token=43f4fbbd-6a2a-48e9-a9e9-dbce114cf4c9"),
-                radius: mediaSize.width / 5,
+                radius: mediaSize.width / 4,
                 child: LoadingAnimationWidget.beat(
                   color: Colors.grey,
                   size: 50,
@@ -45,8 +46,8 @@ class _AccountSettingsState extends State<AccountSettings> {
                 child: Text(
                   user?.displayName ?? "Unknown",
                   style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700
+                    fontSize: 25,
+                    fontWeight: FontWeight.w900
                   ),
                 ),
               ),
@@ -58,7 +59,11 @@ class _AccountSettingsState extends State<AccountSettings> {
                 padding: EdgeInsets.only(left: 17),
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.of(context).pushNamed('/changeemail');
+                    Navigator.of(context).pushNamed('/changeemail').then((_) {
+                      setState(() {
+                        user = FirebaseAuth.instance.currentUser;
+                      });
+                    });
                   },
                   child: ListTile(
                     minLeadingWidth: 70,
@@ -66,13 +71,16 @@ class _AccountSettingsState extends State<AccountSettings> {
                       "이메일 변경",
                       style: TextStyle(
                         fontSize: 15,
-                        fontWeight: FontWeight.w500
+                        fontWeight: FontWeight.w600
                       )
                     ),
                     titleAlignment: ListTileTitleAlignment.center,
                     title: Text(
-                      user?.email ?? "Unknown",
-                      style: TextStyle(fontSize: 13),
+                      user?.email ?? 'Unknown',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.black87
+                      ),
                       textAlign: TextAlign.end,
                     ),
                     trailing: Icon(Icons.arrow_forward_ios, size: 14),
@@ -94,7 +102,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                       "비밀번호 변경",
                       style: TextStyle(
                         fontSize: 15,
-                        fontWeight: FontWeight.w500
+                        fontWeight: FontWeight.w600
                       )
                     ),
                     trailing: Icon(Icons.arrow_forward_ios, size: 14),
@@ -107,11 +115,13 @@ class _AccountSettingsState extends State<AccountSettings> {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
+                        backgroundColor: MainColors.background,
                         title: Column(
                           children: [
                             Text(
                               "정말로 탈퇴하시나요?",
                               style: TextStyle(
+                                fontSize: 20,
                                 fontWeight: FontWeight.w900,
                               ),
                             )
@@ -124,14 +134,14 @@ class _AccountSettingsState extends State<AccountSettings> {
                               "탈퇴 시 계정의 모든 정보는 삭제되고\n다시 복구 할 수 없어요",
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 15,
+                                fontSize: 14,
                               ),
                             )
                           ],
                         ),
                         actions: <Widget>[
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               GestureDetector(
                                 onTap: () {
@@ -140,7 +150,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                                 child: Container(
                                   width: mediaSize.width/4,
                                   height: 40,
-                                  margin: EdgeInsets.fromLTRB(30, 10, 10, 10),
+                                  margin: EdgeInsets.fromLTRB(0, 10, 5, 10),
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
                                     color: Colors.grey,
@@ -163,7 +173,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                                 child: Container(
                                   width: mediaSize.width/4,
                                   height: 40,
-                                  margin: EdgeInsets.fromLTRB(10, 10, 30, 10),
+                                  margin: EdgeInsets.fromLTRB(5, 10, 0, 10),
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
                                     color: Colors.red,
@@ -199,7 +209,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                       "계정 탈퇴",
                       style: TextStyle(
                         fontSize: 15,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                         color: Colors.red
                       )
                     ),

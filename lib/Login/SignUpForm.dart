@@ -89,7 +89,7 @@ class SignUpFormState extends State<SignUpForm> {
                   _emailValidator(_input['email']!),
                   style: TextStyle(
                     color: MainColors.blue,
-                    fontSize: 12
+                    fontSize: 11.9
                   ),
                 )
               ),
@@ -232,7 +232,7 @@ class SignUpFormState extends State<SignUpForm> {
               _pwValidator(_input['pw']!),
               style: TextStyle(
                 color: MainColors.blue,
-                fontSize: 12
+                fontSize: 11.9
               ),
             )
           ),
@@ -284,7 +284,7 @@ class SignUpFormState extends State<SignUpForm> {
               _repwValidator(_input['repw']!),
               style: TextStyle(
                 color: MainColors.blue,
-                fontSize: 12
+                fontSize: 11.9
               ),
             )
           ),
@@ -304,6 +304,7 @@ class SignUpFormState extends State<SignUpForm> {
                     Navigator.of(context).popAndPushNamed('/profileform');
                   });
                 });
+                await user?.updatePhotoURL("https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/profileImage%2Fdefault_profile.png?alt=media&token=43f4fbbd-6a2a-48e9-a9e9-dbce114cf4c9");
               }
             },
             child: Container(

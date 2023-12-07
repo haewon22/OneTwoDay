@@ -2,22 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:onetwoday/Tools/Color/Colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'ProfileDrawer.dart';
+import 'package:onetwoday/GroupItem.dart';
+import 'package:onetwoday/ProfileDrawer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'Tools/Loading/Loading.dart';
+import 'Calendar/Calendar.dart';
 
 enum SampleItem { create, enter }
 
 class HomeBody extends StatefulWidget {
   @override
-  State<HomeBody> createState() => _HomeBodyState();
+  State<HomeBody> createState() => HomeBodyState();
 }
 
-class _HomeBodyState extends State<HomeBody> {
+class HomeBodyState extends State<HomeBody> {
   final user = FirebaseAuth.instance.currentUser;
+  final db = FirebaseFirestore.instance;
   SampleItem? selectedMenu;
   var offsetValue = 50.0;
   bool isSearch = false;
-  String _input = "";
-  bool _isFirstInput = true;
+  String textValue = '';
+
+  Map<String, dynamic> _groovyroom = {};
+
+  List<Widget> gridItem() {
+    Map<String, dynamic> _groovy = {};
+    bool isSearched = false;
+
+    for (var entry in _groovyroom.entries) {
+      if (entry.value['name'].contains(textValue) && textValue.isNotEmpty) _groovy[entry.key] = entry.value;
+    }
+    if (_groovy.isEmpty) {
+      _groovy = _groovyroom;
+    }
+    return _groovy.entries.map((e) => GroupItem(groupKey: e.key, item: e.value, function: refreshGrid)).toList();
+  }
+
+  @override
+  void initState() {
+    refreshGrid();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +50,7 @@ class _HomeBodyState extends State<HomeBody> {
       children: [
         Container(
           alignment: Alignment.center,
-          margin: EdgeInsets.fromLTRB(15, 10, 15, 0),
+          margin: EdgeInsets.fromLTRB(15, 5, 15, 5),
           padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
@@ -34,8 +58,8 @@ class _HomeBodyState extends State<HomeBody> {
             boxShadow: [
               BoxShadow(
                 color: Colors.grey,
-                blurRadius: 10,
-                spreadRadius: -5
+                blurRadius: 8,
+                spreadRadius: -4
               ),
             ]
           ),
@@ -44,37 +68,10 @@ class _HomeBodyState extends State<HomeBody> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(right: 15.0),
-                      child: CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.transparent,
-                        foregroundColor: Colors.transparent,
-                        foregroundImage: NetworkImage(user?.photoURL ?? "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/profileImage%2Fdefault_profile.png?alt=media&token=43f4fbbd-6a2a-48e9-a9e9-dbce114cf4c9"),
-                        child: LoadingAnimationWidget.beat(
-                          color: Colors.grey,
-                          size: 30,
-                        ),
-                      ),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ProfileDrawer(),
-                        Text(
-                          "원투데이에 오신 걸 환영해요",
-                          style: TextStyle(fontWeight: FontWeight.w500),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
+                ProfileDrawer(),
                 GestureDetector(
                   onTap: () {
-                    Navigator.of(context).pushNamed('/calendar');
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => Calendar(calKey: "my")));
                   },
                   child: Stack(
                     alignment: Alignment.center,
@@ -106,7 +103,7 @@ class _HomeBodyState extends State<HomeBody> {
         ),
         Container(
           height: 60,
-          padding: EdgeInsets.fromLTRB(30, 20, 15, 0),
+          padding: EdgeInsets.fromLTRB(30, 0, 15, 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -121,40 +118,82 @@ class _HomeBodyState extends State<HomeBody> {
                 onTap: () {
                   setState(() {
                     isSearch = !isSearch;
+                    textValue = '';
                   });
                 },
               ),
               PopupMenuButton(
-                offset: Offset(-20, offsetValue),
-                icon: Icon(Icons.add),
-                initialValue: selectedMenu,
+                clipBehavior: Clip.hardEdge,
+                shadowColor: Colors.grey,
+                elevation: 5,
+                color: Colors.white,
+                position: PopupMenuPosition.under,
+                splashRadius: 1,
+                tooltip: "",
+                constraints: BoxConstraints(minWidth: 120, minHeight: 100),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30)),
+                offset: Offset(-15, 5),
+                icon: Icon(
+                  Icons.add,
+                  color: Colors.black,
+                ),
                 onSelected: (SampleItem item) {
                   setState(() {
                     selectedMenu = item;
                     if (selectedMenu == SampleItem.create) {
-                      offsetValue = 60.0;
-                      Navigator.of(context).pushNamed('/createroom');
+                      Navigator.of(context).pushNamed('/createroom').then((_) {
+                        refreshGrid();
+                      });
                     } else if (selectedMenu == SampleItem.enter) {
-                      offsetValue = 110.0;
-                      Navigator.of(context).pushNamed('/enterroom');
+                      Navigator.of(context).pushNamed('/enterroom').then((_) {
+                        refreshGrid();
+                      });
                     }
                   });
                 },
                 itemBuilder: (context) => <PopupMenuEntry<SampleItem>>[
                   PopupMenuItem<SampleItem>(
                     value: SampleItem.create,
-                    child: Text("그룹 생성하기"),
+                    child: Center(
+                      child: Text(
+                        "그룹 생성하기",
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    ),
                   ),
                   PopupMenuItem<SampleItem>(
                     value: SampleItem.enter,
-                    child: Text("그룹 참가하기"),
+                    child: Center(
+                      child: Text(
+                        "그룹 참가하기",
+                        style: TextStyle(fontWeight: FontWeight.w600)
+                      ),
+                    ),
                   )
                 ],
               ),
             ],
           ),
         ),
-        //TODO: GirdView
+        Expanded(
+          child: CustomScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverFillRemaining(
+                fillOverscroll: true,
+                child: GridView.count(
+                  padding: EdgeInsets.fromLTRB(15, 5, 15, 20),
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 20,
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  children: gridItem()
+                ),
+              ),
+            ]
+          ),
+        )
       ],
     );
   }
@@ -188,6 +227,11 @@ class _HomeBodyState extends State<HomeBody> {
                   borderRadius: BorderRadius.circular(55),
                 ),
               ),
+              onChanged: (String val) {
+                setState(() {
+                  textValue = val;
+                });
+              }
             ),
           ),
           Icon(Icons.close)
@@ -195,5 +239,28 @@ class _HomeBodyState extends State<HomeBody> {
       );
     }
     return Icon(Icons.search);
+  }
+
+  void refreshGrid() {
+    db.collection("user").doc(user!.uid).collection("group").orderBy("open").get().then(
+      (querySnapshot) {
+        Map<String, dynamic> _groovy = {};
+        for (var docSnapshot in querySnapshot.docs) {
+          db.collection("group").doc(docSnapshot.id).get().then(
+            (DocumentSnapshot doc) {
+              final data = doc.data() as Map<String, dynamic>;
+              setState(() {
+              _groovy[docSnapshot.id] = data;
+            });
+            },
+            onError: (e) => print("Error getting document: $e"),
+          );
+        }
+        setState(() {
+          _groovyroom = _groovy;
+        });
+      },
+      onError: (e) => print("Error completing: $e"),
+    );
   }
 }

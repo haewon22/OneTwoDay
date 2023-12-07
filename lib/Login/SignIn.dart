@@ -74,7 +74,7 @@ class SignInState extends State<SignIn> {
               ),
               Container(
                 height: 55,
-                margin: EdgeInsets.fromLTRB(30, 15, 30, 0), 
+                margin: EdgeInsets.fromLTRB(30, 20, 30, 0), 
                 child: TextFormField(
                   autovalidateMode: AutovalidateMode.always,
                   cursorColor: Color(0xff585551),

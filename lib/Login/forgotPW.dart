@@ -115,11 +115,13 @@ class ForgotPWState extends State<ForgotPW> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
+                              backgroundColor: MainColors.background,
                               title: Column(
                                 children: [
                                   Text(
                                     "비밀번호 변경 메일을 보냈어요",
                                     style: TextStyle(
+                                      fontSize: 20,
                                       fontWeight: FontWeight.w900,
                                     ),
                                   )
@@ -132,7 +134,7 @@ class ForgotPWState extends State<ForgotPW> {
                                     "비밀번호 변경 메일을 확인하고\n메일 속 링크를 눌러\n비밀번호를 변경해주세요",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 14,
                                     ),
                                   )
                                 ],
