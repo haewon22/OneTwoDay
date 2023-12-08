@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:onetwoday/Tools/Color/Colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:onetwoday/GroupItem.dart';
 import 'package:onetwoday/ProfileDrawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'Tools/Loading/Loading.dart';
 import 'Calendar/Calendar.dart';
 
 enum SampleItem { create, enter }
@@ -22,6 +20,7 @@ class HomeBodyState extends State<HomeBody> {
   var offsetValue = 50.0;
   bool isSearch = false;
   String textValue = '';
+  TextEditingController textController = TextEditingController();
 
   Map<String, dynamic> _groovyroom = {};
 
@@ -71,7 +70,7 @@ class HomeBodyState extends State<HomeBody> {
                 ProfileDrawer(),
                 GestureDetector(
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => Calendar(calKey: "my")));
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => Calendar(groupKey: "my")));
                   },
                   child: Stack(
                     alignment: Alignment.center,
@@ -210,6 +209,7 @@ class HomeBodyState extends State<HomeBody> {
               maxWidth: 220
             ),
             child: TextFormField(
+              controller: textController,
               autofocus: true,
               autovalidateMode: AutovalidateMode.always,
               cursorColor: Color(0xff585551),
@@ -229,7 +229,7 @@ class HomeBodyState extends State<HomeBody> {
               ),
               onChanged: (String val) {
                 setState(() {
-                  textValue = val;
+                  textValue = textController.text;
                 });
               }
             ),
@@ -250,8 +250,8 @@ class HomeBodyState extends State<HomeBody> {
             (DocumentSnapshot doc) {
               final data = doc.data() as Map<String, dynamic>;
               setState(() {
-              _groovy[docSnapshot.id] = data;
-            });
+                _groovy[docSnapshot.id] = data;
+              });
             },
             onError: (e) => print("Error getting document: $e"),
           );

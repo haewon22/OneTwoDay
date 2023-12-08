@@ -12,6 +12,8 @@ class ForgotPW extends StatefulWidget{
 class ForgotPWState extends State<ForgotPW> {
   String _input = "";
   bool _isEmailSent = false;
+  TextEditingController textController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     var mediaSize = MediaQuery.of(context).size;
@@ -48,6 +50,7 @@ class ForgotPWState extends State<ForgotPW> {
                 height: 55,
                 margin: EdgeInsets.fromLTRB(30, 30, 30, 0), 
                 child: TextFormField(
+                  controller: textController,
                   autovalidateMode: AutovalidateMode.always,
                   enabled: !_isEmailSent!,
                   cursorColor: Color(0xff585551),
@@ -72,7 +75,7 @@ class ForgotPWState extends State<ForgotPW> {
                   ),
                   onChanged: (String value) { 
                     setState(() {
-                      _input = value!;
+                      _input = textController.text;
                     });
                   },
                 ),
@@ -147,7 +150,7 @@ class ForgotPWState extends State<ForgotPW> {
                                   child: Container(
                                     width: mediaSize.width,
                                     height: 40,
-                                    margin: EdgeInsets.fromLTRB(50, 10, 50, 10),
+                                    margin: EdgeInsets.fromLTRB(50, 0, 50, 0),
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(
                                       color: MainColors.blue,

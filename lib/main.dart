@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'Firebase/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'Tools/Color/Colors.dart';
 import 'Login/Tutorial.dart';
@@ -16,9 +16,6 @@ import 'CreateRoom.dart';
 import 'EnterRoom.dart';
 import 'HomeBody.dart';
 import 'HomePage.dart';
-import 'Mychatting.dart';
-import 'Myboard.dart';
-import 'Mywriting.dart';
 import 'ChangeProfile.dart';
 
 void main() async {
@@ -50,10 +47,7 @@ class MyApp extends StatelessWidget {
         '/enterroom': (BuildContext ctx) => EnterRoom(),
         '/homebody': (BuildContext ctx) => HomeBody(),
         '/homepage': (BuildContext ctx) => HomePage(),
-        '/mychatting': (BuildContext ctx) => Mychatting(),
-        '/myboard': (BuildContext ctx) => Myboard(),
-        '/mywriting': (BuildContext ctx) => Mywriting(),
-        '/changeprofile': (BuildContext ctx) => ChangePrifile(),
+        '/changeprofile': (BuildContext ctx) => ChangeProfile(),
       },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:onetwoday/DashBoard.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class GroupItem extends StatefulWidget {
   final String groupKey;
@@ -21,13 +22,13 @@ class _GroupItemState extends State<GroupItem> {
     var MediaSize = MediaQuery.of(context).size;
     var width = MediaSize.width / 2;
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         final userData = {
           "open": DateTime.now().toString(),
         };
-        db.collection("user").doc(user!.uid).collection('group').doc(widget.groupKey).set(userData, SetOptions(merge: true));
+        await db.collection("user").doc(user!.uid).collection('group').doc(widget.groupKey).set(userData, SetOptions(merge: true));
         widget.function();
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => DashBoard(groupKey: widget.groupKey)));
+        await Navigator.of(context).push(MaterialPageRoute(builder: (context) => DashBoard(groupKey: widget.groupKey)));
       },
       child: Container(
         decoration: BoxDecoration(
@@ -51,7 +52,7 @@ class _GroupItemState extends State<GroupItem> {
                   topLeft: Radius.circular(30)
                 ),
                 image: DecorationImage(
-                  image: NetworkImage(widget.item['groupURL']!),
+                  image: CachedNetworkImageProvider(widget.item['groupURL']!),
                   fit: BoxFit.cover
                 )
               ),

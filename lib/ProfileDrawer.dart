@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:onetwoday/Tools/Color/Colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfileDrawer extends StatefulWidget {
   const ProfileDrawer({super.key});
@@ -24,7 +25,7 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
             radius: 30,
             backgroundColor: Colors.transparent,
             foregroundColor: Colors.transparent,
-            foregroundImage: NetworkImage(user?.photoURL ?? "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/profileImage%2Fdefault_profile.png?alt=media&token=43f4fbbd-6a2a-48e9-a9e9-dbce114cf4c9"),
+            foregroundImage: CachedNetworkImageProvider(user?.photoURL ?? "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/profileImage%2Fdefault_profile.png?alt=media&token=43f4fbbd-6a2a-48e9-a9e9-dbce114cf4c9"),
             child: LoadingAnimationWidget.beat(
               color: Colors.grey,
               size: 30,
@@ -79,7 +80,7 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
                                   child: CircleAvatar(
                                     backgroundColor: Colors.transparent,
                                     foregroundColor: Colors.transparent,
-                                    foregroundImage: NetworkImage(user?.photoURL ?? "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/profileImage%2Fdefault_profile.png?alt=media&token=43f4fbbd-6a2a-48e9-a9e9-dbce114cf4c9"),
+                                    foregroundImage: CachedNetworkImageProvider(user?.photoURL ?? "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/profileImage%2Fdefault_profile.png?alt=media&token=43f4fbbd-6a2a-48e9-a9e9-dbce114cf4c9"),
                                     radius: mediaSize.width / 5,
                                     child: LoadingAnimationWidget.beat(
                                       color: Colors.grey,
@@ -195,9 +196,9 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
                                                             Navigator.of(context).pop();
                                                           },
                                                           child: Container(
-                                                            width: mediaSize.width/4,
+                                                            width: 100,
                                                             height: 40,
-                                                            margin: EdgeInsets.fromLTRB(0, 10, 5, 10),
+                                                            margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                                                             alignment: Alignment.center,
                                                             decoration: BoxDecoration(
                                                               color: Colors.grey,
@@ -218,9 +219,9 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
                                                             Navigator.of(context).pushNamedAndRemoveUntil('/signin', (route) => false);
                                                           },
                                                           child: Container(
-                                                            width: mediaSize.width/4,
+                                                            width: 100,
                                                             height: 40,
-                                                            margin: EdgeInsets.fromLTRB(5, 10, 0, 10),
+                                                            margin: EdgeInsets.fromLTRB(5, 0, 0, 0),
                                                             alignment: Alignment.center,
                                                             decoration: BoxDecoration(
                                                               color: MainColors.blue,

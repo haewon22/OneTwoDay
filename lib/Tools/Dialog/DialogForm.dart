@@ -39,7 +39,7 @@ class DialogForm {
               child: Container(
                 width: width,
                 height: 40,
-                margin: EdgeInsets.fromLTRB(50, 10, 50, 10),
+                margin: EdgeInsets.fromLTRB(50, 0, 50, 0),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: MainColors.blue,

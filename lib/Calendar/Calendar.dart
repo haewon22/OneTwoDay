@@ -4,8 +4,8 @@ import 'package:onetwoday/MyAppBar.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Calendar extends StatefulWidget{
-  String calKey;
-  Calendar({required this.calKey});
+  String groupKey;
+  Calendar({required this.groupKey});
 
   @override
   CalendarState createState() => CalendarState();
@@ -35,7 +35,7 @@ class CalendarState extends State<Calendar> {
                 child: Row(
                   children: [
                     Text(
-                      widget.calKey == "my" ? "내 캘린더 " : "firebase",
+                      widget.groupKey == "my" ? "내 캘린더 " : "firebase",
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.w900

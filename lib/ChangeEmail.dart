@@ -17,6 +17,7 @@ class _ChangeEmailState extends State<ChangeEmail> {
   bool _isFirstInput = true;
   bool _isValidated = false;
   bool _passwordVisible = false;
+  List<TextEditingController> textController = [TextEditingController(), TextEditingController()];
   @override
   Widget build(BuildContext context) {
     var mediaSize = MediaQuery.of(context).size;
@@ -54,6 +55,7 @@ class _ChangeEmailState extends State<ChangeEmail> {
                 height: 55,
                 margin: EdgeInsets.fromLTRB(30, 20, 30, 0), 
                 child: TextFormField(
+                  controller: textController[0],
                   autovalidateMode: AutovalidateMode.always,
                   cursorColor: Color(0xff585551),
                   obscureText: !_passwordVisible,
@@ -85,15 +87,16 @@ class _ChangeEmailState extends State<ChangeEmail> {
                   ),
                   onChanged: (String value) { 
                     setState(() {
-                      _input['pw'] = value!;
+                      _input['pw'] = textController[0].text;
                     });
                   },
                 ),
               ),
               Container(
                 height: 55,
-                margin: EdgeInsets.fromLTRB(30, 20, 30, 0), 
+                margin: EdgeInsets.fromLTRB(30, 20, 30, 0),
                 child: TextFormField(
+                  controller: textController[1],
                   autovalidateMode: AutovalidateMode.always,
                   cursorColor: Color(0xff585551),
                   decoration: InputDecoration(
@@ -117,8 +120,8 @@ class _ChangeEmailState extends State<ChangeEmail> {
                   ),
                   onChanged: (String value) { 
                     setState(() {
-                      if (!value!.isEmpty) _isFirstInput = false;
-                      _input['newemail'] = value!;
+                      if (!textController[1].text.isEmpty) _isFirstInput = false;
+                      _input['newemail'] = textController[1].text;
                     });
                   },
                 ),

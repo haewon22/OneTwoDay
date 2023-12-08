@@ -17,6 +17,7 @@ class _ChangePWState extends State<ChangePW> {
   Map<String, bool> _isFirstInput = {'newpw' : true, 'newrepw' : true};
   Map<String, bool> _isValidated = {'newpw' : false, 'newrepw' : false};
   Map<String, bool> _passwordVisible = {'pw': false, 'newpw': false, 'newrepw': false};
+  List<TextEditingController> textController = [TextEditingController(), TextEditingController(), TextEditingController()];
   @override
   Widget build(BuildContext context) {
     var mediaSize = MediaQuery.of(context).size;
@@ -54,6 +55,7 @@ class _ChangePWState extends State<ChangePW> {
                 height: 55,
                 margin: EdgeInsets.fromLTRB(30, 20, 30, 0), 
                 child: TextFormField(
+                  controller: textController[0],
                   autovalidateMode: AutovalidateMode.always,
                   cursorColor: Color(0xff585551),
                   obscureText: !_passwordVisible['pw']!,
@@ -85,7 +87,7 @@ class _ChangePWState extends State<ChangePW> {
                   ),
                   onChanged: (String value) { 
                     setState(() {
-                      _input['pw'] = value!;
+                      _input['pw'] = textController[0].text;
                     });
                   },
                 ),
@@ -94,6 +96,7 @@ class _ChangePWState extends State<ChangePW> {
                 height: 55,
                 margin: EdgeInsets.fromLTRB(30, 20, 30, 0), 
                 child: TextFormField(
+                  controller: textController[1],
                   autovalidateMode: AutovalidateMode.always,
                   obscureText: !_passwordVisible['newpw']!,
                   cursorColor: Color(0xff585551),
@@ -125,8 +128,8 @@ class _ChangePWState extends State<ChangePW> {
                   ),
                   onChanged: (String value) {
                     setState(() {
-                      if (!value!.isEmpty) _isFirstInput['newpw'] = false;
-                      _input['newpw'] = value!;
+                      if (!textController[1].text.isEmpty) _isFirstInput['newpw'] = false;
+                      _input['newpw'] = textController[1].text;
                     });
                   },
                 ),
@@ -146,6 +149,7 @@ class _ChangePWState extends State<ChangePW> {
                 height: 55,
                 margin: EdgeInsets.fromLTRB(30, 5, 30, 0), 
                 child: TextFormField(
+                  controller: textController[2],
                   autovalidateMode: AutovalidateMode.always,
                   obscureText: !_passwordVisible['newrepw']!,
                   cursorColor: Color(0xff585551),
@@ -177,8 +181,8 @@ class _ChangePWState extends State<ChangePW> {
                   ),
                   onChanged: (String value) { 
                     setState(() {
-                      if (!value!.isEmpty) _isFirstInput['newrepw'] = false;
-                      _input['newrepw'] = value!;
+                      if (!textController[2].text.isEmpty) _isFirstInput['newrepw'] = false;
+                      _input['newrepw'] = textController[2].text;
                     });
                   },
                 ),

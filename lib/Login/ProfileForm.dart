@@ -9,6 +9,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfileForm extends StatefulWidget{
   @override
@@ -19,6 +20,7 @@ class ProfileFormState extends State<ProfileForm> {
   var user = FirebaseAuth.instance.currentUser;
   final db = FirebaseFirestore.instance;
   String _input = "";
+  TextEditingController textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +58,7 @@ class ProfileFormState extends State<ProfileForm> {
                 height: 55,
                 margin: EdgeInsets.fromLTRB(30, 30, 30, 0), 
                 child: TextFormField(
+                  controller: textController,
                   autovalidateMode: AutovalidateMode.always,
                   cursorColor: Color(0xff585551),
                   maxLength: 5,
@@ -84,7 +87,7 @@ class ProfileFormState extends State<ProfileForm> {
                   ),
                   onChanged: (String value) { 
                     setState(() {
-                      _input = value!;
+                      _input = textController.text;
                     });
                   },
                 ),
@@ -97,7 +100,7 @@ class ProfileFormState extends State<ProfileForm> {
                     CircleAvatar(
                       backgroundColor: Colors.transparent,
                       foregroundColor: Colors.transparent,
-                      foregroundImage: NetworkImage(user?.photoURL ?? "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/profileImage%2Fdefault_profile.png?alt=media&token=43f4fbbd-6a2a-48e9-a9e9-dbce114cf4c9"),
+                      foregroundImage: CachedNetworkImageProvider(user?.photoURL ?? "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/profileImage%2Fdefault_profile.png?alt=media&token=43f4fbbd-6a2a-48e9-a9e9-dbce114cf4c9"),
                       radius: mediaSize.width / 4,
                       child: LoadingAnimationWidget.beat(
                         color: Colors.grey,

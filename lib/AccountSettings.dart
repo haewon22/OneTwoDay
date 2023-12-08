@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:onetwoday/Tools/Color/Colors.dart';
 import 'package:onetwoday/MyAppBar.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class AccountSettings extends StatefulWidget {
   const AccountSettings({super.key});
@@ -34,7 +35,7 @@ class _AccountSettingsState extends State<AccountSettings> {
               CircleAvatar(
                 backgroundColor: Colors.transparent,
                 foregroundColor: Colors.transparent,
-                foregroundImage: NetworkImage(user?.photoURL ?? "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/profileImage%2Fdefault_profile.png?alt=media&token=43f4fbbd-6a2a-48e9-a9e9-dbce114cf4c9"),
+                foregroundImage: CachedNetworkImageProvider(user?.photoURL ?? "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/profileImage%2Fdefault_profile.png?alt=media&token=43f4fbbd-6a2a-48e9-a9e9-dbce114cf4c9"),
                 radius: mediaSize.width / 4,
                 child: LoadingAnimationWidget.beat(
                   color: Colors.grey,
@@ -148,9 +149,9 @@ class _AccountSettingsState extends State<AccountSettings> {
                                   Navigator.of(context).pop();
                                 },
                                 child: Container(
-                                  width: mediaSize.width/4,
+                                  width: 100,
                                   height: 40,
-                                  margin: EdgeInsets.fromLTRB(0, 10, 5, 10),
+                                  margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
                                     color: Colors.grey,
@@ -171,9 +172,9 @@ class _AccountSettingsState extends State<AccountSettings> {
                                   Navigator.of(context).pushNamedAndRemoveUntil('/signin', (route) => false);
                                 },
                                 child: Container(
-                                  width: mediaSize.width/4,
+                                  width: 100,
                                   height: 40,
-                                  margin: EdgeInsets.fromLTRB(5, 10, 0, 10),
+                                  margin: EdgeInsets.fromLTRB(5, 0, 0, 0),
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
                                     color: Colors.red,

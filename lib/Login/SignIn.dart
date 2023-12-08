@@ -12,6 +12,8 @@ class SignIn extends StatefulWidget{
 class SignInState extends State<SignIn> {
   bool _passwordVisible = false;
   Map<String, String> _input = {'email' : "", 'pw' : ""};
+  List<TextEditingController> textController = [TextEditingController(), TextEditingController()];
+
   @override
   Widget build(BuildContext context) {
     var mediaSize = MediaQuery.of(context).size;
@@ -48,6 +50,7 @@ class SignInState extends State<SignIn> {
                 height: 55,
                 margin: EdgeInsets.fromLTRB(30, 30, 30, 0), 
                 child: TextFormField(
+                  controller: textController[0],
                   autovalidateMode: AutovalidateMode.always,
                   cursorColor: Color(0xff585551),
                   decoration: InputDecoration(
@@ -67,7 +70,7 @@ class SignInState extends State<SignIn> {
                   ),
                   onChanged: (String value) { 
                     setState(() {
-                      _input['email'] = value!;
+                      _input['email'] = textController[0].text;
                     });
                   },
                 ),
@@ -76,6 +79,7 @@ class SignInState extends State<SignIn> {
                 height: 55,
                 margin: EdgeInsets.fromLTRB(30, 20, 30, 0), 
                 child: TextFormField(
+                  controller: textController[1],
                   autovalidateMode: AutovalidateMode.always,
                   cursorColor: Color(0xff585551),
                   obscureText: !_passwordVisible,
@@ -107,7 +111,7 @@ class SignInState extends State<SignIn> {
                   ),
                   onChanged: (String value) { 
                     setState(() {
-                      _input['pw'] = value!;
+                      _input['pw'] = textController[1].text;
                     });
                   },
                 ),

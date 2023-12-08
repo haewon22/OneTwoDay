@@ -16,6 +16,8 @@ class SignUpFormState extends State<SignUpForm> {
   Map<String, String> _input = {'email' : "", 'pw' : "", 'repw' : ""};
   Map<String, bool> _isFirstInput = {'email' : true, 'pw' : true, 'repw' : true};
   Map<String, bool> _isValidated = {'email' : false, 'pw' : false, 'repw' : false};
+  List<TextEditingController> textController = [TextEditingController(), TextEditingController(), TextEditingController()];
+
   @override
   Widget build(BuildContext context) {
     var mediaSize = MediaQuery.of(context).size;
@@ -52,6 +54,7 @@ class SignUpFormState extends State<SignUpForm> {
                 height: 55,
                 margin: EdgeInsets.fromLTRB(30, 30, 30, 0), 
                 child: TextFormField(
+                  controller: textController[0],
                   autovalidateMode: AutovalidateMode.always,
                   enabled: !_isEmail['sent']!,
                   cursorColor: Color(0xff585551),
@@ -76,8 +79,8 @@ class SignUpFormState extends State<SignUpForm> {
                   ),
                   onChanged: (String value) { 
                     setState(() {
-                      if (!value!.isEmpty) _isFirstInput['email'] = false;
-                      _input['email'] = value!;
+                      if (!textController[0].text.isEmpty) _isFirstInput['email'] = false;
+                      _input['email'] = textController[0].text;
                     });
                   },
                 ),
@@ -188,6 +191,7 @@ class SignUpFormState extends State<SignUpForm> {
             height: 55,
             margin: EdgeInsets.fromLTRB(30, 8, 30, 0), 
             child: TextFormField(
+              controller: textController[1],
               autovalidateMode: AutovalidateMode.always,
               obscureText: !_textVisible['pw']!,
               cursorColor: Color(0xff585551),
@@ -219,8 +223,8 @@ class SignUpFormState extends State<SignUpForm> {
               ),
               onChanged: (String value) {
                 setState(() {
-                  if (!value!.isEmpty) _isFirstInput['pw'] = false;
-                  _input['pw'] = value!;
+                  if (!textController[1].text.isEmpty) _isFirstInput['pw'] = false;
+                  _input['pw'] = textController[1].text;
                 });
               },
             ),
@@ -240,6 +244,7 @@ class SignUpFormState extends State<SignUpForm> {
             height: 55,
             margin: EdgeInsets.fromLTRB(30, 8, 30, 0), 
             child: TextFormField(
+              controller: textController[2],
               autovalidateMode: AutovalidateMode.always,
               obscureText: !_textVisible['repw']!,
               cursorColor: Color(0xff585551),
@@ -271,8 +276,8 @@ class SignUpFormState extends State<SignUpForm> {
               ),
               onChanged: (String value) { 
                 setState(() {
-                  if (!value!.isEmpty) _isFirstInput['repw'] = false;
-                  _input['repw'] = value!;
+                  if (!textController[2].text.isEmpty) _isFirstInput['repw'] = false;
+                  _input['repw'] = textController[2].text;
                 });
               },
             ),

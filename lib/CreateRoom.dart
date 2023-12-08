@@ -12,6 +12,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class CreateRoom extends StatefulWidget {
   const CreateRoom({super.key});
@@ -27,6 +28,7 @@ class _CreateRoomState extends State<CreateRoom> {
   String textValue = '';
   String _imageURL = "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/groupImage%2Fdefault_group.png?alt=media&token=038b6402-ba76-4591-8375-c805d9df01c5";
   String groupKey = '';
+  TextEditingController textController = TextEditingController();
 
   @override
   initState() {
@@ -81,7 +83,7 @@ class _CreateRoomState extends State<CreateRoom> {
                   CircleAvatar(
                     backgroundColor: Colors.transparent,
                     foregroundColor: Colors.transparent,
-                    foregroundImage: NetworkImage(_imageURL),
+                    foregroundImage: CachedNetworkImageProvider(_imageURL),
                     radius: mediaSize.width / 4,
                     child: LoadingAnimationWidget.beat(
                       color: Colors.grey,
@@ -194,6 +196,7 @@ class _CreateRoomState extends State<CreateRoom> {
                 Container(
                   margin: EdgeInsets.fromLTRB(30, 20, 30, 0),
                   child: TextFormField(
+                    controller: textController,
                     maxLength: 10,
                     autovalidateMode: AutovalidateMode.always,
                     cursorColor: Color(0xff585551),
@@ -202,7 +205,7 @@ class _CreateRoomState extends State<CreateRoom> {
                     ],
                     onChanged: (String val) {
                       setState(() {
-                        textValue = val;
+                        textValue = textController.text;
                       });
                     },
                     decoration: InputDecoration(
@@ -254,7 +257,8 @@ class _CreateRoomState extends State<CreateRoom> {
                 Loading.loadingPage(context, mediaSize.width);
                 final data = {
                   "groupURL": _imageURL,
-                  "name": textValue
+                  "name": textValue,
+                  "isPrivate": switchValue
                 };
                 final memberData = {
                   "isAdmin": true,

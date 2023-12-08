@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onetwoday/MyAppBar.dart';
 import 'Tools/Color/Colors.dart';
+import 'Tools/Loading/Loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EnterRoom extends StatefulWidget {
   const EnterRoom({super.key});
@@ -12,8 +14,11 @@ class EnterRoom extends StatefulWidget {
 }
 
 class _EnterRoomState extends State<EnterRoom> {
+  final user = FirebaseAuth.instance.currentUser;
+  final db = FirebaseFirestore.instance;
   bool _isClicked = false;
   String textValue = '';
+  TextEditingController textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +42,7 @@ class _EnterRoomState extends State<EnterRoom> {
             Container(
               margin: EdgeInsets.fromLTRB(30, 30, 30, 0),
               child: TextFormField(
+                controller: textController,
                 autovalidateMode: AutovalidateMode.always,
                 cursorColor: Color(0xff585551),
                 inputFormatters: [
@@ -45,7 +51,7 @@ class _EnterRoomState extends State<EnterRoom> {
                 ],
                 onChanged: (String val) {
                   setState(() {
-                    textValue = val;
+                    textValue = textController.text;
                     if (val.length == 5)
                       _isClicked = true;
                     else
@@ -78,8 +84,27 @@ class _EnterRoomState extends State<EnterRoom> {
               ),
             ),
             GestureDetector(
-              onTap: () {
-                if (_isClicked) print("완료 눌림");
+              onTap: () async {
+                Loading.loadingPage(context, mediaSize.width);
+                bool isPrivate = false;
+                await db.collection("group").doc(textValue).get().then(
+                  (DocumentSnapshot doc) {
+                    final data = doc.data() as Map<String, dynamic>;
+                    setState(() {
+                      isPrivate = data['isPrivate'];
+                    });
+                  },
+                  onError: (e) => print("Error getting document: $e"),
+                );
+                final memberData = {
+                  "isAdmin": !isPrivate,
+                };
+                final userData = {
+                  "open": DateTime.now().toString(),
+                };
+                db.collection("group").doc(textValue).collection('member').doc(user!.uid).set(memberData, SetOptions(merge: true));
+                db.collection("user").doc(user!.uid).collection('group').doc(textValue).set(userData, SetOptions(merge: true));
+                Navigator.of(context).popUntil(ModalRoute.withName('/homepage'));
               },
               child: Container(
                 width: mediaSize.width,
