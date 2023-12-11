@@ -25,6 +25,7 @@ class CalendarState extends State<Calendar> {
       appBar: MyAppBar(
         appBar: AppBar(),
         title: "",
+        groupS: false
       ),
       body: SingleChildScrollView(
         child: SafeArea(
@@ -64,9 +65,17 @@ class CalendarState extends State<Calendar> {
                       color: Colors.white,
                       fontFamily: 'NanumSquareRound'
                     ),
+                    todayDecoration: BoxDecoration(
+                      color: Color(0x804169e1),
+                      shape: BoxShape.circle,
+                    ),
                     selectedTextStyle: TextStyle(
                       color: Colors.white,
                       fontFamily: 'NanumSquareRound'
+                    ),
+                    selectedDecoration: BoxDecoration(
+                      color: MainColors.blue,
+                      shape: BoxShape.circle,
                     ),
                     rangeStartTextStyle: TextStyle(
                       fontFamily: 'NanumSquareRound'

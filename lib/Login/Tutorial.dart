@@ -21,130 +21,138 @@ class TutorialState extends State<Tutorial> {
   @override
   Widget build(BuildContext context) {
     var mediaSize = MediaQuery.of(context).size;
-    return Scaffold(
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          AnimatedContainer(
-            height: mediaSize.height,
-            duration: const Duration(seconds: 1),
-            curve: Curves.fastOutSlowIn,
-            color: _pageColor[_page]
-          ),
-          SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  height: 30,
-                  child: Stack(
-                    alignment: Alignment.centerRight,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _page = 0;
-                              });
-                            },
-                            child: AnimatedContainer(
-                              width: (_page == 0) ? 30 : 15,
-                              height: 7,
-                              margin: EdgeInsets.symmetric(horizontal: 2),
-                              duration: const Duration(seconds: 1),
-                              curve: Curves.fastOutSlowIn,
-                              decoration: BoxDecoration(
-                                color: _firstBoxColor[_page],
-                                borderRadius: BorderRadius.circular(10)
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: Scaffold(
+        body: Stack(
+          alignment: Alignment.center,
+          children: [
+            AnimatedContainer(
+              height: mediaSize.height,
+              duration: const Duration(seconds: 1),
+              curve: Curves.fastOutSlowIn,
+              color: _pageColor[_page]
+            ),
+            SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 30,
+                    child: Stack(
+                      alignment: Alignment.centerRight,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _page = 0;
+                                });
+                              },
+                              child: AnimatedContainer(
+                                width: (_page == 0) ? 30 : 15,
+                                height: 7,
+                                margin: EdgeInsets.symmetric(horizontal: 2),
+                                duration: const Duration(seconds: 1),
+                                curve: Curves.fastOutSlowIn,
+                                decoration: BoxDecoration(
+                                  color: _firstBoxColor[_page],
+                                  borderRadius: BorderRadius.circular(10)
+                                ),
                               ),
                             ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _page = 1;
-                              });
-                            },
-                            child: AnimatedContainer(
-                              width: (_page == 0) ? 15 : 30,
-                              height: 7,
-                              margin: EdgeInsets.symmetric(horizontal: 2),
-                              duration: const Duration(seconds: 1),
-                              curve: Curves.fastOutSlowIn,
-                              decoration: BoxDecoration(
-                                color: _secondBoxColor[_page],
-                                borderRadius: BorderRadius.circular(10)
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _page = 1;
+                                });
+                              },
+                              child: AnimatedContainer(
+                                width: (_page == 0) ? 15 : 30,
+                                height: 7,
+                                margin: EdgeInsets.symmetric(horizontal: 2),
+                                duration: const Duration(seconds: 1),
+                                curve: Curves.fastOutSlowIn,
+                                decoration: BoxDecoration(
+                                  color: _secondBoxColor[_page],
+                                  borderRadius: BorderRadius.circular(10)
+                                ),
                               ),
-                            ),
-                          )
-                        ],
-                      ),
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 20),
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _page = 2;
-                            });
-                          },
-                          child: Text(
-                            "Skip",
-                            style: TextStyle(
-                              color: (_page == 2) ? Colors.transparent : Colors.white,
-                              fontWeight: FontWeight.bold
                             )
-                          )
+                          ],
                         ),
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 20),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _page = 2;
+                              });
+                            },
+                            child: Text(
+                              "Skip",
+                              style: TextStyle(
+                                color: (_page == 2) ? Colors.transparent : Colors.white,
+                                fontWeight: FontWeight.bold
+                              )
+                            )
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: mediaSize.height * 0.45,
+                    alignment: Alignment.center,
+                    child: Lottie.asset(_centerLottie[_page]),
+                  ),
+                  Container(
+                    height: 60,
+                    child: Text(
+                      _titleText[_page],
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 30,
+                        fontWeight: FontWeight.w900
                       )
-                    ],
+                    ),
                   ),
-                ),
-                Container(
-                  height: mediaSize.height * 0.45,
-                  alignment: Alignment.center,
-                  child: Lottie.asset(_centerLottie[_page]),
-                ),
-                Container(
-                  height: 60,
-                  child: Text(
-                    _titleText[_page],
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.w900
-                    )
+                  Container(
+                    height: 60,
+                    child: Text(
+                      _descriptionText[_page],
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        height: 1.7
+                      )
+                    ),
                   ),
-                ),
-                Container(
-                  height: 60,
-                  child: Text(
-                    _descriptionText[_page],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      height: 1.7
-                    )
-                  ),
-                ),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _page++;
-                      });
-                    },
-                    child: Container(
-                      child: _bottomButton(mediaSize)
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _page++;
+                        });
+                      },
+                      child: Container(
+                        child: _bottomButton(mediaSize)
+                      )
                     )
                   )
-                )
-              ]
+                ]
+              )
             )
-          )
-        ],
-      )
+          ],
+        )
+      ),
     );
   }
 

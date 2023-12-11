@@ -19,208 +19,131 @@ class _AccountSettingsState extends State<AccountSettings> {
   Widget build(BuildContext context) {
     var mediaSize = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: MyAppBar(appBar: AppBar(), title: ""),
-      body: ListView(
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                margin: EdgeInsets.fromLTRB(0, 15, 0, 50),
-                child: Text(
-                  "계정 설정",
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800),
-                ),
-              ),
-              CircleAvatar(
-                backgroundColor: Colors.transparent,
-                foregroundColor: Colors.transparent,
-                foregroundImage: CachedNetworkImageProvider(user?.photoURL ?? "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/profileImage%2Fdefault_profile.png?alt=media&token=43f4fbbd-6a2a-48e9-a9e9-dbce114cf4c9"),
-                radius: mediaSize.width / 4,
-                child: LoadingAnimationWidget.beat(
-                  color: Colors.grey,
-                  size: 50,
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(0, 10, 0, 20),
-                child: Text(
-                  user?.displayName ?? "Unknown",
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.w900
+      appBar: MyAppBar(appBar: AppBar(), title: "", groupS: false),
+      body: GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: ListView(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 15, 0, 50),
+                  child: Text(
+                    "계정 설정",
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800),
                   ),
                 ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    color: Colors.white),
-                margin: EdgeInsets.fromLTRB(30, 30, 30, 20),
-                padding: EdgeInsets.only(left: 17),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pushNamed('/changeemail').then((_) {
-                      setState(() {
-                        user = FirebaseAuth.instance.currentUser;
-                      });
-                    });
-                  },
-                  child: ListTile(
-                    minLeadingWidth: 70,
-                    leading: Text(
-                      "이메일 변경",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600
-                      )
-                    ),
-                    titleAlignment: ListTileTitleAlignment.center,
-                    title: Text(
-                      user?.email ?? 'Unknown',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.black87
-                      ),
-                      textAlign: TextAlign.end,
-                    ),
-                    trailing: Icon(Icons.arrow_forward_ios, size: 14),
+                CircleAvatar(
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: Colors.transparent,
+                  foregroundImage: CachedNetworkImageProvider(user?.photoURL ?? "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/profileImage%2Fdefault_profile.png?alt=media&token=43f4fbbd-6a2a-48e9-a9e9-dbce114cf4c9"),
+                  radius: mediaSize.width / 4,
+                  child: LoadingAnimationWidget.beat(
+                    color: Colors.grey,
+                    size: 50,
                   ),
                 ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    color: Colors.white),
-                margin: EdgeInsets.fromLTRB(30, 0, 30, 20),
-                padding: EdgeInsets.only(left: 14),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pushNamed('/changepw');
-                  },
-                  child: ListTile(
-                    leading: Text(
-                      "비밀번호 변경",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600
-                      )
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 10, 0, 20),
+                  child: Text(
+                    user?.displayName ?? "Unknown",
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.w900
                     ),
-                    trailing: Icon(Icons.arrow_forward_ios, size: 14),
                   ),
                 ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        backgroundColor: MainColors.background,
-                        title: Column(
-                          children: [
-                            Text(
-                              "정말로 탈퇴하시나요?",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            )
-                          ],
-                        ),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "탈퇴 시 계정의 모든 정보는 삭제되고\n다시 복구 할 수 없어요",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 14,
-                              ),
-                            )
-                          ],
-                        ),
-                        actions: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Container(
-                                  width: 100,
-                                  height: 40,
-                                  margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey,
-                                    borderRadius: BorderRadius.circular(55)
-                                  ),
-                                  child: Text(
-                                    "취소",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700
-                                    )
-                                  ),
-                                )
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  FirebaseAuth.instance.signOut();
-                                  Navigator.of(context).pushNamedAndRemoveUntil('/signin', (route) => false);
-                                },
-                                child: Container(
-                                  width: 100,
-                                  height: 40,
-                                  margin: EdgeInsets.fromLTRB(5, 0, 0, 0),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    borderRadius: BorderRadius.circular(55)
-                                  ),
-                                  child: Text(
-                                    "탈퇴",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700
-                                    )
-                                  ),
-                                )
-                              ),
-                            ],
-                          )
-                        ],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25)
-                        ),
-                      );
-                    },
-                  );
-                },
-                child: Container(
+                Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(50),
                       color: Colors.white),
-                  margin: EdgeInsets.fromLTRB(30, 0, 30, 10),
-                  padding: EdgeInsets.only(left: 14),
-                  child: ListTile(
-                    leading: Text(
-                      "계정 탈퇴",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.red
-                      )
+                  margin: EdgeInsets.fromLTRB(30, 30, 30, 20),
+                  padding: EdgeInsets.only(left: 17),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pushNamed('/changeemail').then((_) {
+                        setState(() {
+                          user = FirebaseAuth.instance.currentUser;
+                        });
+                      });
+                    },
+                    child: ListTile(
+                      minLeadingWidth: 70,
+                      leading: Text(
+                        "이메일 변경",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600
+                        )
+                      ),
+                      titleAlignment: ListTileTitleAlignment.center,
+                      title: Text(
+                        user?.email ?? 'Unknown',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.black87
+                        ),
+                        textAlign: TextAlign.end,
+                      ),
+                      trailing: Icon(Icons.arrow_forward_ios, size: 14),
                     ),
-                    trailing: Icon(Icons.arrow_forward_ios, size: 14),
                   ),
                 ),
-              )
-            ],
-          ),
-        ],
+                Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      color: Colors.white),
+                  margin: EdgeInsets.fromLTRB(30, 0, 30, 20),
+                  padding: EdgeInsets.only(left: 14),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pushNamed('/changepw');
+                    },
+                    child: ListTile(
+                      leading: Text(
+                        "비밀번호 변경",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600
+                        )
+                      ),
+                      trailing: Icon(Icons.arrow_forward_ios, size: 14),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/deleteaccount');
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        color: Colors.white),
+                    margin: EdgeInsets.fromLTRB(30, 0, 30, 10),
+                    padding: EdgeInsets.only(left: 14),
+                    child: ListTile(
+                      leading: Text(
+                        "계정 탈퇴",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.red
+                        )
+                      ),
+                      trailing: Icon(Icons.arrow_forward_ios, size: 14),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

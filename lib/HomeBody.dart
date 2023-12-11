@@ -219,11 +219,11 @@ class HomeBodyState extends State<HomeBody> {
                 filled: true,
                 fillColor: Colors.white,
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
+                  borderSide: BorderSide.none,
                   borderRadius: BorderRadius.circular(55),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
+                  borderSide: BorderSide.none,
                   borderRadius: BorderRadius.circular(55),
                 ),
               ),

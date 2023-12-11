@@ -3,8 +3,12 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:onetwoday/MyAppBar.dart';
 import 'Tools/Color/Colors.dart';
+import 'Tools/Loading/Loading.dart';
+import 'package:lottie/lottie.dart';
 
 class Mychatting extends StatefulWidget {
   final String groupKey;
@@ -19,6 +23,8 @@ class MychattingState extends State<Mychatting> {
   final db = FirebaseFirestore.instance;
   String groupName = "";
   List<Widget> chattings = [];
+  bool isLoaded = false;
+  String message = "";
 
   @override
   void setState(fn) {
@@ -67,18 +73,25 @@ class MychattingState extends State<Mychatting> {
           String date = docSnapshot.data()['date'];
           await db.collection("user").doc(docSnapshot.data()['uid']).get().then(
             (DocumentSnapshot doc) {
-              final data = doc.data() as Map<String, dynamic>;
-              setState(() {
-                name = data['name'];
-                profileURL = data['profileURL'];
-              });
+              if (doc.data() == null) {
+                setState(() {
+                  name = "탈퇴 계정";
+                  profileURL = "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/profileImage%2Fdefault_profile.png?alt=media&token=43f4fbbd-6a2a-48e9-a9e9-dbce114cf4c9";
+                });
+              } else {
+                final data = doc.data() as Map<String, dynamic>;
+                setState(() {
+                  name = data['name'];
+                  profileURL = data['profileURL'];
+                });
+              }
             },
             onError: (e) => print("Error getting document: $e"),
           );
           if (previousDate == "") {
             chat.add(Container(
               margin: EdgeInsets.only(top: 10),
-              padding: EdgeInsets.all(3),
+              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
               alignment: Alignment.center,
               width: 120,
               decoration: BoxDecoration(
@@ -86,14 +99,14 @@ class MychattingState extends State<Mychatting> {
                 color: Colors.black26,
               ),
               child: Text(
-                DateFormat('yyyy-MM-dd').format(DateTime.parse(date)),
+                DateFormat('yyyy년 MM월 dd일').format(DateTime.parse(date)),
                 style: TextStyle(color: Colors.white, fontSize: 13),
               ),
             ));
           } else if (DateFormat('yyyy-MM-dd').parse(date) != DateFormat('yyyy-MM-dd').parse(previousDate)) {
             chat.add(Container(
               margin: EdgeInsets.only(top: 30),
-              padding: EdgeInsets.all(3),
+              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
               alignment: Alignment.center,
               width: 120,
               decoration: BoxDecoration(
@@ -101,7 +114,7 @@ class MychattingState extends State<Mychatting> {
                 color: Colors.black26,
               ),
               child: Text(
-                DateFormat('yyyy-MM-dd').format(DateTime.parse(date)),
+                DateFormat('yyyy년 MM월 dd일').format(DateTime.parse(date)),
                 style: TextStyle(color: Colors.white, fontSize: 13),
               ),
             ));
@@ -150,9 +163,18 @@ class MychattingState extends State<Mychatting> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.account_circle,
-                      size: 45,
+                    Padding(
+                      padding: EdgeInsets.all(2),
+                      child: CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: Colors.transparent,
+                        foregroundImage: CachedNetworkImageProvider(profileURL),
+                        child: LoadingAnimationWidget.beat(
+                          color: Colors.grey,
+                          size: 20,
+                        ),
+                      ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 5),
@@ -232,7 +254,7 @@ class MychattingState extends State<Mychatting> {
                                     margin: EdgeInsets.only(bottom: 15),
                                     padding: EdgeInsets.fromLTRB(12, 5, 12, 7),
                                     child: Text(
-                                      content,
+                                      content.replaceAll("\n", " "),
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         color: Colors.white,
@@ -371,9 +393,10 @@ class MychattingState extends State<Mychatting> {
                                     margin: EdgeInsets.only(bottom: 15),
                                     padding: EdgeInsets.fromLTRB(12, 5, 12, 7),
                                     child: Text(
-                                      content,
+                                      content.replaceAll("\n", " "),
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
+                                        overflow: TextOverflow.ellipsis,
                                         color: Colors.white,
                                         fontSize: 15,
                                         fontWeight: FontWeight.w400
@@ -483,108 +506,140 @@ class MychattingState extends State<Mychatting> {
     );
     setState(() {
       chattings = chat;
+      isLoaded = true;
+      message = "아직 채팅이 없어요\n새로운 채팅을 시작해봐요";
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    var mediaSize = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: MyAppBar(
         appBar: AppBar(),
         title: groupName,
+        groupS: false
       ),
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            Container(
-              alignment: Alignment.topCenter,
-              child: SingleChildScrollView(
-                reverse: true,
-                padding: EdgeInsets.fromLTRB(5, 5, 5, 85),
-                child: Column(
-                  children: chattings
-                )
+      body: GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              Container(
+                alignment: Alignment.topCenter,
+                child: SingleChildScrollView(
+                  reverse: true,
+                  padding: EdgeInsets.fromLTRB(5, 5, 5, 90),
+                  child: Column(
+                    children: !isLoaded ? [Container(
+                      alignment: Alignment.center,
+                      width: mediaSize.width,
+                      height: mediaSize.height - 250,
+                      child: Lottie.asset(
+                        'assets/lotties/loading.json',
+                        frameRate: FrameRate.max,
+                        width: 70,
+                        height: 70
+                      ),
+                    )] : chattings.length != 0 ? chattings : [Container(
+                      alignment: Alignment.center,
+                      width: mediaSize.width,
+                      height: mediaSize.height - 250,
+                      child: Text(
+                        message,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12
+                        ),
+                      ),
+                    )]
+                  )
+                ),
               ),
-            ),
-            Container(
-              padding: EdgeInsets.fromLTRB(5, 0, 5, 10),
-              alignment: Alignment.bottomCenter,
-              child: Stack(
-                alignment: Alignment.bottomRight,
-                children: [
-                  TextFormField(
-                    autofocus: true,
-                    minLines: 1,
-                    maxLines: 4,
-                    cursorColor: Color(0xff585551),
-                    keyboardType: TextInputType.multiline,
-                    controller: _textEditingController,
-                    onChanged: (String? val) {
-                      setState(() {
-                        textContent = _textEditingController.text;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                      isDense: true,
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: '내용을 입력해주세요',
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(30),
+              Container(
+                padding: EdgeInsets.fromLTRB(5, 0, 5, 10),
+                alignment: Alignment.bottomCenter,
+                child: Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    TextFormField(
+                      autofocus: false,
+                      minLines: 1,
+                      maxLines: 4,
+                      cursorColor: Color(0xff585551),
+                      keyboardType: TextInputType.multiline,
+                      controller: _textEditingController,
+                      onChanged: (String? val) {
+                        setState(() {
+                          textContent = _textEditingController.text;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                        isDense: true,
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: '내용을 입력해주세요',
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        disabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
                       ),
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.all(12),
-                    height: 37,
-                    width: 37,
-                    decoration: BoxDecoration(
-                        color: MainColors.blue,
-                        borderRadius: BorderRadius.circular(30)),
-                    child: IconButton(
-                      iconSize: 20,
-                      splashRadius: 0.1,
-                      icon: Icon(Icons.arrow_upward, color: Colors.white),
-                      onPressed: () {
-                        if (_textEditingController.text.replaceAll('\n', '') != '') {
-                          for (int i = 0; i < _textEditingController.text.length; i++) {
-                            if (_textEditingController.text.replaceAll('\n', '')[i] != ' ') {
-                              String dt = DateTime.now().toString();
-
-                              final data = {
-                                "uid": user!.uid,
-                                "content": textContent,
-                                "date": dt
-                              };
-                              db.collection("group").doc(widget.groupKey).collection("chat").add(data).then((_) {
-                                _textEditingController.clear();
-                              });
-                              
-                              break;
+                    Container(
+                      margin: EdgeInsets.all(12),
+                      height: 37,
+                      width: 37,
+                      decoration: BoxDecoration(
+                          color: MainColors.blue,
+                          borderRadius: BorderRadius.circular(30)),
+                      child: IconButton(
+                        iconSize: 20,
+                        splashRadius: 0.1,
+                        icon: Icon(Icons.arrow_upward, color: Colors.white),
+                        onPressed: () {
+                          if (_textEditingController.text.replaceAll('\n', '') != '') {
+                            for (int i = 0; i < _textEditingController.text.length; i++) {
+                              if (_textEditingController.text.replaceAll('\n', '')[i] != ' ') {
+                                String dt = DateTime.now().toString();
+                                final data = {
+                                  "uid": user!.uid,
+                                  "content": textContent,
+                                  "date": dt
+                                };
+                                db.collection("group").doc(widget.groupKey).collection("chat").add(data).then((_) {
+                                  _textEditingController.clear();
+                                });
+                                break;
+                              }
                             }
                           }
-                        }
-                      },
-                    ),
-                  )
-                ],
-              ),
-            )
-          ],
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

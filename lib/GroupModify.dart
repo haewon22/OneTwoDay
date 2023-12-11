@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
@@ -14,46 +15,43 @@ import 'package:image_picker/image_picker.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class CreateRoom extends StatefulWidget {
-  const CreateRoom({super.key});
+class GroupModify extends StatefulWidget {
+  final String groupKey;
+  GroupModify({required this.groupKey});
 
   @override
-  State<CreateRoom> createState() => _CreateRoomState();
+  State<GroupModify> createState() => _GroupModifyState();
 }
 
-class _CreateRoomState extends State<CreateRoom> {
+class _GroupModifyState extends State<GroupModify> {
   final user = FirebaseAuth.instance.currentUser;
   final db = FirebaseFirestore.instance;
   bool switchValue = false;
   String textValue = '';
-  String _imageURL = "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/groupImage%2Fdefault_group.png?alt=media&token=038b6402-ba76-4591-8375-c805d9df01c5";
-  String groupKey = '';
-  TextEditingController textController = TextEditingController();
+  String _imageURL = "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/profileImage%2Ftransparent.png?alt=media&token=8f6724fb-0983-480d-bf95-ec3a1bf7a503";
+  TextEditingController textController = TextEditingController(text: "");
+  Map<String, dynamic> origin = {'name': "", 'isPrivate': false};
 
   @override
-  initState() {
-    while (true) {
-      bool stop = true;
-      const _chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      Random _rnd = Random();
-      String randomStr = String.fromCharCodes(Iterable.generate(5,
-        (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))
-      ));
-      db.collection("group").get().then(
-        (querySnapshot) {
-          for (var docSnapshot in querySnapshot.docs) {
-            if (randomStr == docSnapshot.id) stop = false;
-          }
-        },
-        onError: (e) => print("Error completing: $e"),
-      );
-      if (stop) {
+  void initState() {
+    updateGroup();
+  }
+
+  void updateGroup() async {
+    await db.collection('group').doc(widget.groupKey).get().then(
+      (DocumentSnapshot doc) {
+        final data = doc.data() as Map<String, dynamic>;
         setState(() {
-          groupKey = randomStr;
+          textValue = data['name'];
+          textController = TextEditingController(text: data['name']);
+          _imageURL = data['groupURL'];
+          switchValue = data['isPrivate'];
+          origin['name'] = data['name'];
+          origin['isPrivate'] = data['isPrivate'];
         });
-        break;
-      }
-    }
+      },
+      onError: (e) => print("Error getting document: $e"),
+    );
   }
   
   @override
@@ -79,7 +77,7 @@ class _CreateRoomState extends State<CreateRoom> {
               Container(
                 margin: EdgeInsets.fromLTRB(0, 15, 0, 50),
                 child: Text(
-                  "그룹 생성하기",
+                  "그룹 설정",
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800),
                 ),
               ),
@@ -101,7 +99,7 @@ class _CreateRoomState extends State<CreateRoom> {
                     GestureDetector(
                       onTap: () async {
                         if (_imageURL == "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/groupImage%2Fdefault_group.png?alt=media&token=038b6402-ba76-4591-8375-c805d9df01c5") {
-                          openAlbum(mediaSize.width, groupKey);
+                          openAlbum(mediaSize.width, widget.groupKey);
                         } else {
                           showModalBottomSheet(
                             backgroundColor: Colors.transparent,
@@ -124,12 +122,13 @@ class _CreateRoomState extends State<CreateRoom> {
                                       onTap: () async {
                                         Loading.loadingPage(context, mediaSize.width);
                                         final storageRef = FirebaseStorage.instance.ref();
-                                        final groupRef = storageRef.child("groupImage").child(groupKey);
+                                        final groupRef = storageRef.child("groupImage").child(widget.groupKey);
                                         await groupRef.delete();
                                         setState(() {
                                           _imageURL = "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/groupImage%2Fdefault_group.png?alt=media&token=038b6402-ba76-4591-8375-c805d9df01c5";
                                         });
-                                        Navigator.of(context).popUntil(ModalRoute.withName('/createroom'));
+                                        await db.collection("group").doc(widget.groupKey).set({'groupURL': "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/groupImage%2Fdefault_group.png?alt=media&token=038b6402-ba76-4591-8375-c805d9df01c5"}, SetOptions(merge: true));
+                                        Navigator.of(context).popUntil(ModalRoute.withName(widget.groupKey + "modify"));
                                       },
                                       child: Column(
                                         mainAxisAlignment: MainAxisAlignment.end,
@@ -154,7 +153,7 @@ class _CreateRoomState extends State<CreateRoom> {
                                     ),
                                     GestureDetector(
                                       onTap: () async {
-                                        openAlbum(mediaSize.width, groupKey);
+                                        openAlbum(mediaSize.width, widget.groupKey);
                                       },
                                       child: Column(
                                         mainAxisAlignment: MainAxisAlignment.end,
@@ -264,41 +263,176 @@ class _CreateRoomState extends State<CreateRoom> {
                 ],
               ),
               GestureDetector(
-                onTap: () {
-                  if (textValue.isNotEmpty) {
+                onTap: () async {
+                  if (!(origin['name'] == textValue && origin['isPrivate'] == switchValue)) {
                     Loading.loadingPage(context, mediaSize.width);
                     final data = {
-                      "groupURL": _imageURL,
                       "name": textValue,
                       "isPrivate": switchValue
                     };
-                    final memberData = {
-                      "isAdmin": true,
-                    };
-                    final userData = {
-                      "open": DateTime.now().toString(),
-                    };
-                    db.collection("group").doc(groupKey).set(data, SetOptions(merge: true));
-                    db.collection("group").doc(groupKey).collection('member').doc(user!.uid).set(memberData, SetOptions(merge: true));
-                    db.collection("user").doc(user!.uid).collection('group').doc(groupKey).set(userData, SetOptions(merge: true));
-                    Navigator.of(context).popUntil(ModalRoute.withName('/homepage'));
+                    await db.collection("group").doc(widget.groupKey).set(data, SetOptions(merge: true));
+                    setState(() {
+                      origin['name'] = textValue;
+                      origin['isPrivate'] = switchValue;
+                    });
+                    Navigator.of(context).pop();
                   }
                 },
                 child: Container(
                   width: mediaSize.width,
                   height: 55,
-                  margin: EdgeInsets.fromLTRB(30, 30, 30, 50),
+                  margin: EdgeInsets.fromLTRB(30, 30, 30, 30),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: textValue.isNotEmpty ? MainColors.blue : Colors.grey,
+                    color: !(origin['name'] == textValue && origin['isPrivate'] == switchValue) ? MainColors.blue : Colors.grey,
                     borderRadius: BorderRadius.circular(55)
                   ),
                   child: Text(
-                    "완료",
+                    "수정",
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w700
                     )
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        backgroundColor: MainColors.background,
+                        title: Column(
+                          children: [
+                            Text(
+                              "그룹을 삭제할까요?",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            )
+                          ],
+                        ),
+                        content: Text(
+                          "그룹 삭제 후 되돌릴 수 없어요",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14,
+                          ),
+                        ),
+                        actions: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Container(
+                                  width: 100,
+                                  height: 40,
+                                  margin: EdgeInsets.only(right: 5),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey,
+                                    borderRadius: BorderRadius.circular(55)
+                                  ),
+                                  child: Text(
+                                    "취소",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700
+                                    )
+                                  ),
+                                )
+                              ),
+                              GestureDetector(
+                                onTap: () async {
+                                  Loading.loadingPage(context, mediaSize.width);
+                                  await db.collection('group').doc(widget.groupKey).collection('member').get().then(
+                                    (querySnapshot) async {
+                                      for (var docSnapshot in querySnapshot.docs) {
+                                        await db.collection("user").doc(docSnapshot.id).collection("group").doc(widget.groupKey).delete();
+                                      }
+                                    },
+                                    onError: (e) => print("Error completing: $e"),
+                                  );
+                                  final board = db.collection('group').doc(widget.groupKey).collection("board");
+                                  await board.get().then(
+                                    (querySnapshot) async {
+                                      for (var docSnapshot in querySnapshot.docs) {
+                                        await board.doc(docSnapshot.id).collection("chat").get().then(
+                                          (querySnapshot2) async {
+                                            for (var docSnapshot2 in querySnapshot2.docs) {
+                                              await board.doc(docSnapshot.id).collection("chat").doc(docSnapshot2.id).delete();
+                                            }
+                                          },
+                                          onError: (e) => print("Error completing: $e"),
+                                        );
+                                        await board.doc(docSnapshot.id).delete();
+                                      }
+                                    },
+                                    onError: (e) => print("Error completing: $e"),
+                                  );
+                                  await db.collection("group").doc(widget.groupKey).collection("chat").get().then(
+                                    (querySnapshot) async {
+                                      for (var docSnapshot in querySnapshot.docs) {
+                                        await db.collection("group").doc(widget.groupKey).collection("chat").doc(docSnapshot.id).delete();
+                                      }
+                                    },
+                                    onError: (e) => print("Error completing: $e"),
+                                  );
+                                  await db.collection("group").doc(widget.groupKey).collection("member").get().then(
+                                    (querySnapshot) async {
+                                      for (var docSnapshot in querySnapshot.docs) {
+                                        await db.collection("group").doc(widget.groupKey).collection("member").doc(docSnapshot.id).delete();
+                                      }
+                                    },
+                                    onError: (e) => print("Error completing: $e"),
+                                  );
+                                  await db.collection("group").doc(widget.groupKey).delete();
+                                  if (_imageURL != "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/groupImage%2Fdefault_group.png?alt=media&token=038b6402-ba76-4591-8375-c805d9df01c5") {
+                                    final storageRef = FirebaseStorage.instance.ref();
+                                    final groupRef = storageRef.child("groupImage").child(widget.groupKey);
+                                    await groupRef.delete();
+                                  }
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).popUntil(ModalRoute.withName('/homepage'));
+                                },
+                                child: Container(
+                                  width: 100,
+                                  height: 40,
+                                  margin: EdgeInsets.only(left: 5),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(55)
+                                  ),
+                                  child: Text(
+                                    "삭제",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700
+                                    )
+                                  ),
+                                )
+                              ),
+                            ],
+                          )
+                        ],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25)
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: Text(
+                  "그룹 삭제",
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 12
                   ),
                 ),
               )
@@ -329,13 +463,14 @@ class _CreateRoomState extends State<CreateRoom> {
             setState(() {
               _imageURL = groupURL;
             });
-            Navigator.of(context).popUntil(ModalRoute.withName('/createroom'));
+            await db.collection("group").doc(widget.groupKey).set({'groupURL': groupURL}, SetOptions(merge: true));
+            Navigator.of(context).popUntil(ModalRoute.withName(widget.groupKey + "modify"));
             break;
           case TaskState.canceled:
-            Navigator.of(context).popUntil(ModalRoute.withName('/createroom'));
+            Navigator.of(context).popUntil(ModalRoute.withName(widget.groupKey + "modify"));
             break;
           case TaskState.error:
-            Navigator.of(context).popUntil(ModalRoute.withName('/createroom'));
+            Navigator.of(context).popUntil(ModalRoute.withName(widget.groupKey + "modify"));
             DialogForm.dialogForm(
               context, width,
               "사진 업로드를 실패했어요",
