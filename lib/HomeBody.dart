@@ -20,6 +20,7 @@ class HomeBodyState extends State<HomeBody> {
   var offsetValue = 50.0;
   bool isSearch = false;
   String textValue = '';
+  bool isLoaded = false;
   TextEditingController textController = TextEditingController();
 
   Map<String, dynamic> _groovyroom = {};
@@ -176,7 +177,7 @@ class HomeBodyState extends State<HomeBody> {
           ),
         ),
         Expanded(
-          child: CustomScrollView(
+          child: !isLoaded ? Container() : _groovyroom.length != 0 ? CustomScrollView(
             physics: AlwaysScrollableScrollPhysics(),
             slivers: [
               SliverFillRemaining(
@@ -191,6 +192,17 @@ class HomeBodyState extends State<HomeBody> {
                 ),
               ),
             ]
+          ) : Container(
+            padding: EdgeInsets.only(bottom: 100),
+            alignment: Alignment.center,
+            child: Text(
+              "아직 추가한 그룹이 없어요\n+ 버튼을 눌러 그룹을 추가해봐요",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 12
+              ),
+            ),
           ),
         )
       ],
@@ -258,6 +270,7 @@ class HomeBodyState extends State<HomeBody> {
         }
         setState(() {
           _groovyroom = _groovy;
+          isLoaded = true;
         });
       },
       onError: (e) => print("Error completing: $e"),
