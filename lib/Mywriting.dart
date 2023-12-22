@@ -443,7 +443,8 @@ class MywritingState extends State<Mywriting> {
                                               GestureDetector(
                                                 onTap: () async {
                                                   await db.collection("group").doc(widget.groupKey).collection("board").doc(widget.noticeKey).delete();
-                                                  Navigator.of(context).popUntil(ModalRoute.withName(widget.groupKey));
+                                                  int count = 0;
+                                                  Navigator.of(context).popUntil((_) => count++ >= 2);
                                                 },
                                                 child: Container(
                                                   width: 100,

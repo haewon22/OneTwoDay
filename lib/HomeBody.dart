@@ -40,7 +40,11 @@ class HomeBodyState extends State<HomeBody> {
 
   @override
   void initState() {
-    refreshGrid();
+    db.collection("user").doc(user!.uid).collection("group").snapshots().listen(
+      (event) {
+        refreshGrid();
+      }
+    );
   }
 
   @override
@@ -253,13 +257,13 @@ class HomeBodyState extends State<HomeBody> {
     return Icon(Icons.search);
   }
 
-  void refreshGrid() {
-    db.collection("user").doc(user!.uid).collection("group").orderBy("open").get().then(
-      (querySnapshot) {
-        Map<String, dynamic> _groovy = {};
+  void refreshGrid() async {
+    Map<String, dynamic> _groovy = {};
+    await db.collection("user").doc(user!.uid).collection("group").orderBy("open", descending: true).get().then(
+      (querySnapshot) async {
         for (var docSnapshot in querySnapshot.docs) {
-          db.collection("group").doc(docSnapshot.id).get().then(
-            (DocumentSnapshot doc) {
+          await db.collection("group").doc(docSnapshot.id).get().then(
+            (DocumentSnapshot doc) async {
               final data = doc.data() as Map<String, dynamic>;
               setState(() {
                 _groovy[docSnapshot.id] = data;
@@ -268,12 +272,12 @@ class HomeBodyState extends State<HomeBody> {
             onError: (e) => print("Error getting document: $e"),
           );
         }
-        setState(() {
-          _groovyroom = _groovy;
-          isLoaded = true;
-        });
       },
       onError: (e) => print("Error completing: $e"),
     );
+    setState(() {
+      _groovyroom = _groovy;
+      isLoaded = true;
+    });
   }
 }

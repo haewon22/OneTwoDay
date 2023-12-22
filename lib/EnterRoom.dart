@@ -51,10 +51,12 @@ class _EnterRoomState extends State<EnterRoom> {
               Container(
                 margin: EdgeInsets.fromLTRB(30, 30, 30, 0),
                 child: TextFormField(
+                  maxLength: 5,
                   controller: textController,
                   autovalidateMode: AutovalidateMode.always,
                   cursorColor: Color(0xff585551),
                   inputFormatters: [
+                    LengthLimitingTextInputFormatter(5),
                     FilteringTextInputFormatter(RegExp('[a-zA-Z]'),
                         allow: true),
                   ],
@@ -94,38 +96,40 @@ class _EnterRoomState extends State<EnterRoom> {
               ),
               GestureDetector(
                 onTap: () async {
-                  Loading.loadingPage(context, mediaSize.width);
-                  bool isExist = true;
-                  bool isPrivate = false;
-                  await db.collection("group").doc(textValue).get().then(
-                    (DocumentSnapshot doc) {
-                      if (doc.data() == null) {
-                        isExist = false;
-                        Navigator.of(context).pop();
-                        DialogForm.dialogForm(
-                          context, mediaSize.width,
-                          "그룹이 존재하지 않아요",
-                          "존재하지 않은 그룹 키예요\n그룹 키를 다시 입력해주세요"
-                        );
-                      } else {
-                        final data = doc.data() as Map<String, dynamic>;
-                        setState(() {
-                          isPrivate = data['isPrivate'];
-                        });
-                      }
-                    },
-                    onError: (e) => print("Error getting document: $e"),
-                  );
-                  if (isExist) {
-                    final memberData = {
-                      "isAdmin": !isPrivate,
-                    };
-                    final userData = {
-                      "open": DateTime.now().toString(),
-                    };
-                    db.collection("group").doc(textValue).collection('member').doc(user!.uid).set(memberData, SetOptions(merge: true));
-                    db.collection("user").doc(user!.uid).collection('group').doc(textValue).set(userData, SetOptions(merge: true));
-                    Navigator.of(context).popUntil(ModalRoute.withName('/homepage'));
+                  if (textValue.length == 5) {
+                    Loading.loadingPage(context, mediaSize.width);
+                    bool isExist = true;
+                    bool isPrivate = false;
+                    await db.collection("group").doc(textValue.toUpperCase()).get().then(
+                      (DocumentSnapshot doc) {
+                        if (doc.data() == null) {
+                          isExist = false;
+                          Navigator.of(context).pop();
+                          DialogForm.dialogForm(
+                            context, mediaSize.width,
+                            "그룹이 존재하지 않아요",
+                            "존재하지 않은 그룹 키예요\n그룹 키를 다시 입력해주세요"
+                          );
+                        } else {
+                          final data = doc.data() as Map<String, dynamic>;
+                          setState(() {
+                            isPrivate = data['isPrivate'];
+                          });
+                        }
+                      },
+                      onError: (e) => print("Error getting document: $e"),
+                    );
+                    if (isExist) {
+                      final memberData = {
+                        "isAdmin": !isPrivate,
+                      };
+                      final userData = {
+                        "open": DateTime.now().toString(),
+                      };
+                      db.collection("group").doc(textValue.toUpperCase()).collection('member').doc(user!.uid).set(memberData, SetOptions(merge: true));
+                      db.collection("user").doc(user!.uid).collection('group').doc(textValue.toUpperCase()).set(userData, SetOptions(merge: true));
+                      Navigator.of(context).popUntil(ModalRoute.withName('/homepage'));
+                    }
                   }
                 },
                 child: Container(
@@ -134,8 +138,8 @@ class _EnterRoomState extends State<EnterRoom> {
                   margin: EdgeInsets.fromLTRB(30, 30, 30, 0),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                      color: _isClicked ? MainColors.blue : Colors.grey,
-                      borderRadius: BorderRadius.circular(55)),
+                    color: _isClicked ? MainColors.blue : Colors.grey,
+                    borderRadius: BorderRadius.circular(55)),
                   child: Text(
                     "완료",
                     style: TextStyle(

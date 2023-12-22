@@ -26,9 +26,11 @@ class _GroupItemState extends State<GroupItem> {
         final userData = {
           "open": DateTime.now().toString(),
         };
-        await db.collection("user").doc(user!.uid).collection('group').doc(widget.groupKey).set(userData, SetOptions(merge: true));
-        await Navigator.of(context).push(MaterialPageRoute(builder: (context) => DashBoard(groupKey: widget.groupKey))).then((_) {
+        await db.collection("user").doc(user!.uid).collection('group').doc(widget.groupKey).set(userData, SetOptions(merge: true)).then((_) async {
           widget.function();
+          await Navigator.of(context).push(MaterialPageRoute(builder: (context) => DashBoard(groupKey: widget.groupKey))).then((_) async {
+            widget.function();
+          });
         });
       },
       child: Container(

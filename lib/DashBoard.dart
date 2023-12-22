@@ -217,7 +217,6 @@ class _DashBoardState extends State<DashBoard> {
                       ),
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                          settings: RouteSettings(name: widget.groupKey),
                           builder: (context) => Myboard(groupKey: widget.groupKey)
                         )).then((_) {
                           updateNotice();

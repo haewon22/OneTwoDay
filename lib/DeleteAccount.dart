@@ -278,7 +278,7 @@ class _DeleteAccountState extends State<DeleteAccount> {
                       borderRadius: BorderRadius.circular(55)
                     ),
                     child: Text(
-                      "계정 삭제",
+                      "계정 탈퇴",
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w700

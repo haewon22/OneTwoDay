@@ -128,7 +128,8 @@ class _GroupModifyState extends State<GroupModify> {
                                           _imageURL = "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/groupImage%2Fdefault_group.png?alt=media&token=038b6402-ba76-4591-8375-c805d9df01c5";
                                         });
                                         await db.collection("group").doc(widget.groupKey).set({'groupURL': "https://firebasestorage.googleapis.com/v0/b/onetwoday-12d.appspot.com/o/groupImage%2Fdefault_group.png?alt=media&token=038b6402-ba76-4591-8375-c805d9df01c5"}, SetOptions(merge: true));
-                                        Navigator.of(context).popUntil(ModalRoute.withName(widget.groupKey + "modify"));
+                                        int count = 0;
+                                        Navigator.of(context).popUntil((_) => count++ >= 2);
                                       },
                                       child: Column(
                                         mainAxisAlignment: MainAxisAlignment.end,
@@ -154,6 +155,7 @@ class _GroupModifyState extends State<GroupModify> {
                                     GestureDetector(
                                       onTap: () async {
                                         openAlbum(mediaSize.width, widget.groupKey);
+                                        Navigator.of(context).pop();
                                       },
                                       child: Column(
                                         mainAxisAlignment: MainAxisAlignment.end,
@@ -397,7 +399,6 @@ class _GroupModifyState extends State<GroupModify> {
                                     final groupRef = storageRef.child("groupImage").child(widget.groupKey);
                                     await groupRef.delete();
                                   }
-                                  Navigator.of(context).pop();
                                   Navigator.of(context).popUntil(ModalRoute.withName('/homepage'));
                                 },
                                 child: Container(
@@ -464,13 +465,13 @@ class _GroupModifyState extends State<GroupModify> {
               _imageURL = groupURL;
             });
             await db.collection("group").doc(widget.groupKey).set({'groupURL': groupURL}, SetOptions(merge: true));
-            Navigator.of(context).popUntil(ModalRoute.withName(widget.groupKey + "modify"));
+            Navigator.of(context).pop();
             break;
           case TaskState.canceled:
-            Navigator.of(context).popUntil(ModalRoute.withName(widget.groupKey + "modify"));
+            Navigator.of(context).pop();
             break;
           case TaskState.error:
-            Navigator.of(context).popUntil(ModalRoute.withName(widget.groupKey + "modify"));
+            Navigator.of(context).pop();
             DialogForm.dialogForm(
               context, width,
               "사진 업로드를 실패했어요",

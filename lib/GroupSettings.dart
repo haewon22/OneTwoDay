@@ -115,7 +115,6 @@ class _GroupSettingsState extends State<GroupSettings> {
                                 GestureDetector(
                                   onTap: () async {
                                     await Navigator.of(context).push(MaterialPageRoute(
-                                      settings: RouteSettings(name: widget.groupKey + "modify"),
                                       builder: (context) => GroupModify(groupKey: widget.groupKey)
                                     )).then((_) async {
                                       await db.collection('group').doc(widget.groupKey).get().then(
