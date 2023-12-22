@@ -114,7 +114,7 @@ class _GroupSettingsState extends State<GroupSettings> {
                               children: [
                                 GestureDetector(
                                   onTap: () async {
-                                    await Navigator.of(context).push(MaterialPageRoute(
+                                    if (isAdmin) await Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) => GroupModify(groupKey: widget.groupKey)
                                     )).then((_) async {
                                       await db.collection('group').doc(widget.groupKey).get().then(
@@ -133,6 +133,11 @@ class _GroupSettingsState extends State<GroupSettings> {
                                         onError: (e) => print("Error getting document: $e"),
                                       );
                                     });
+                                    else DialogForm.dialogForm(
+                                      context, mediaSize.width,
+                                      "권한자만 접근할 수 있어요",
+                                      "권한자에게 권한 부여를 요청해보세요"
+                                    );
                                   },
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.end,
@@ -157,7 +162,7 @@ class _GroupSettingsState extends State<GroupSettings> {
                                 ),
                                 GestureDetector(
                                   onTap: () async {
-                                    await Navigator.push(context, MaterialPageRoute(builder: (context) => MemberSettings(groupKey: widget.groupKey))).then((_) async {
+                                    if (isAdmin) await Navigator.push(context, MaterialPageRoute(builder: (context) => MemberSettings(groupKey: widget.groupKey))).then((_) async {
                                       await db.collection('group').doc(widget.groupKey).collection('member').doc(user!.uid).get().then(
                                         (DocumentSnapshot doc) {
                                           final data = doc.data() as Map<String, dynamic>;
@@ -171,6 +176,11 @@ class _GroupSettingsState extends State<GroupSettings> {
                                         onError: (e) => print("Error getting document: $e"),
                                       );
                                     });
+                                    else DialogForm.dialogForm(
+                                      context, mediaSize.width,
+                                      "권한자만 접근할 수 있어요",
+                                      "권한자에게 권한 부여를 요청해보세요"
+                                    );
                                   },
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.end,

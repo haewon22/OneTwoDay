@@ -45,7 +45,7 @@ class SignInState extends State<SignIn> {
                 Container(
                   height: 60,
                   child: Text(
-                    "돌아오신 것을 환영합니다\n당신을 그리워했어요",
+                    "원투데이에 오신 것을 환영해요\n즐거운 시간 보내세요",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.black,

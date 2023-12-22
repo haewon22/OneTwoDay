@@ -39,6 +39,13 @@ class HomeBodyState extends State<HomeBody> {
   }
 
   @override
+  void setState(fn) {
+    if(mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
   void initState() {
     db.collection("user").doc(user!.uid).collection("group").snapshots().listen(
       (event) {

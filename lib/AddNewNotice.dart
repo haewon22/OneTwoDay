@@ -53,11 +53,6 @@ class _AddNewNoticeState extends State<AddNewNotice> {
   String? selectedMinute_e = "0분";
 
   @override
-  void initState() {
-    
-  }
-
-  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
