@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:onetwoday/MyAppBar.dart';
-import 'package:onetwoday/Tools/Color/Colors.dart';
+import '../../Tools/Appbar/MyAppBar.dart';
+import '../../Tools/Color/Colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'Tools/Dialog/DialogForm.dart';
-import 'Tools/Loading/Loading.dart';
+import '../../Tools/Dialog/DialogForm.dart';
+import '../../Tools/Loading/Loading.dart';
 
 class DeleteAccount extends StatefulWidget {
   const DeleteAccount({super.key});
@@ -201,6 +201,14 @@ class _DeleteAccountState extends State<DeleteAccount> {
                                               for (var docSnapshot in querySnapshot.docs) {
                                                 await db.collection("group").doc(docSnapshot.id).collection("member").doc(user.uid).delete();
                                                 await db.collection("user").doc(user.uid).collection("group").doc(docSnapshot.id).delete();
+                                              }
+                                            },
+                                            onError: (e) => print("Error completing: $e"),
+                                          );
+                                          await db.collection("user").doc(user.uid).collection("calendar").get().then(
+                                            (querySnapshot) async {
+                                              for (var docSnapshot in querySnapshot.docs) {
+                                                await db.collection("user").doc(user.uid).collection("calendar").doc(docSnapshot.id).delete();
                                               }
                                             },
                                             onError: (e) => print("Error completing: $e"),

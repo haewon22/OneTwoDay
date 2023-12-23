@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:onetwoday/Tools/Color/Colors.dart';
+import '../Tools/Color/Colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';

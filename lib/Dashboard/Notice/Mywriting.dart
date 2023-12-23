@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:onetwoday/ChangeNotice.dart';
-import 'package:onetwoday/MyAppBar.dart';
+import '../../Dashboard/Notice/ChangeNotice.dart';
+import '../../Tools/Appbar/MyAppBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -8,8 +8,9 @@ import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'Myboard.dart';
-import 'Tools/Color/Colors.dart';
+import '../../Tools/Color/Colors.dart';
 import 'package:lottie/lottie.dart';
+import '../../Tools/Dialog/DialogForm.dart';
 
 enum SampleItem { change, delete }
 
@@ -278,6 +279,13 @@ class MywritingState extends State<Mywriting> {
         });
       },
       onError: (e) => print("Error getting document: $e"),
+    );
+    db.collection("user").doc(user!.uid).collection("group").doc(widget.groupKey).snapshots().listen(
+      (event) {
+        if (event.data() == null) Future.delayed(Duration.zero, () {
+          if (mounted) DialogForm.dialogQuit(context);
+        });
+      }
     );
   }
 

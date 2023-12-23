@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:onetwoday/HomeBody.dart';
-import 'Tools/Color/Colors.dart';
+import 'HomeBody.dart';
+import '../Tools/Color/Colors.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

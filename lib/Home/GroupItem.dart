@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:onetwoday/DashBoard.dart';
+import '../../Dashboard/DashBoard.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class GroupItem extends StatefulWidget {
@@ -17,6 +17,14 @@ class GroupItem extends StatefulWidget {
 class _GroupItemState extends State<GroupItem> {
   final user = FirebaseAuth.instance.currentUser;
   final db = FirebaseFirestore.instance;
+
+  @override
+  void setState(fn) {
+    if(mounted) {
+      super.setState(fn);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var MediaSize = MediaQuery.of(context).size;

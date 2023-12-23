@@ -4,10 +4,10 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:onetwoday/MyAppBar.dart';
-import 'Tools/Color/Colors.dart';
-import 'Tools/Dialog/DialogForm.dart';
-import 'Tools/Loading/Loading.dart';
+import '../../Tools/Appbar/MyAppBar.dart';
+import '../../Tools/Color/Colors.dart';
+import '../../Tools/Dialog/DialogForm.dart';
+import '../../Tools/Loading/Loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -373,6 +373,26 @@ class _GroupModifyState extends State<GroupModify> {
                                           onError: (e) => print("Error completing: $e"),
                                         );
                                         await board.doc(docSnapshot.id).delete();
+                                      }
+                                    },
+                                    onError: (e) => print("Error completing: $e"),
+                                  );
+                                  await db.collection("group").doc(widget.groupKey).collection("calendar").get().then(
+                                    (querySnapshot) async {
+                                      for (var docSnapshot in querySnapshot.docs) {
+                                        await db.collection("group").doc(widget.groupKey).collection("member").get().then(
+                                          (memberSnapshot) async {
+                                            for (var docmemberSnapshot in memberSnapshot.docs) {
+                                              await db.collection("user").doc(docmemberSnapshot.id).collection("calendar").doc(docSnapshot.id).delete().then((_) {},
+                                                onError: (e) => print("Error updating document $e"),
+                                              );
+                                            }
+                                          },
+                                          onError: (e) => print("Error completing: $e"),
+                                        );
+                                        await db.collection("group").doc(widget.groupKey).collection("calendar").doc(docSnapshot.id).delete().then((_) {},
+                                          onError: (e) => print("Error updating document $e"),
+                                        );
                                       }
                                     },
                                     onError: (e) => print("Error completing: $e"),

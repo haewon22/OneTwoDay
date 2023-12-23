@@ -2,14 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:onetwoday/AddNewNotice.dart';
-import 'package:onetwoday/MyAppBar.dart';
-import 'package:onetwoday/Mywriting.dart';
+import '../../Dashboard/Notice/AddNewNotice.dart';
+import '../../Tools/Appbar/MyAppBar.dart';
+import '../../Dashboard/Notice/Mywriting.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'Tools/Color/Colors.dart';
+import '../../Tools/Color/Colors.dart';
+import '../../Tools/Dialog/DialogForm.dart';
 import 'package:lottie/lottie.dart';
 
 class Myboard extends StatefulWidget {
@@ -58,6 +59,13 @@ class MyboardState extends State<Myboard> {
       onError: (e) => print("Error getting document: $e"),
     );
     updateBoard();
+    db.collection("user").doc(user!.uid).collection("group").doc(widget.groupKey).snapshots().listen(
+      (event) {
+        if (event.data() == null) Future.delayed(Duration.zero, () {
+          if (mounted) DialogForm.dialogQuit(context);
+        });
+      }
+    );
   }
 
   void updateBoard() async {

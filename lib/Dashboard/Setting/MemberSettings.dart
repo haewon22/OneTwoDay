@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:onetwoday/MyAppBar.dart';
-import 'package:onetwoday/Tools/Color/Colors.dart';
+import '../../Tools/Appbar/MyAppBar.dart';
+import '../../Tools/Color/Colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'Tools/Dialog/DialogForm.dart';
+import '../../Tools/Dialog/DialogForm.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -49,6 +49,13 @@ class _MemberSettingsState extends State<MemberSettings> {
   void initState() {
     updateAdmin();
     updateList();
+    db.collection("user").doc(user!.uid).collection("group").doc(widget.groupKey).snapshots().listen(
+      (event) {
+        if (event.data() == null) Future.delayed(Duration.zero, () {
+          if (mounted) DialogForm.dialogQuit(context);
+        });
+      }
+    );
   }
 
   void updateList() async {
@@ -193,6 +200,16 @@ class _MemberSettingsState extends State<MemberSettings> {
                                   onTap: () async {
                                     await db.collection("group").doc(widget.groupKey).collection("member").doc(_grant[index-1].uid).delete();
                                     await db.collection("user").doc(_grant[index-1].uid).collection("group").doc(widget.groupKey).delete();
+                                    await db.collection("group").doc(widget.groupKey).collection("calendar").get().then(
+                                      (querySnapshot) async {
+                                        for (var docSnapshot in querySnapshot.docs) {
+                                          await db.collection("user").doc(_grant[index-1].uid).collection("calendar").doc(docSnapshot.id).delete().then((_) {},
+                                            onError: (e) => print("Error updating document $e"),
+                                          );
+                                        }
+                                      },
+                                      onError: (e) => print("Error completing: $e"),
+                                    );
                                     updateList();
                                     Navigator.of(context).pop();
                                   },
@@ -362,6 +379,16 @@ class _MemberSettingsState extends State<MemberSettings> {
                                   onTap: () async {
                                     await db.collection("group").doc(widget.groupKey).collection("member").doc(_ngrant[index-_grant.length-2].uid).delete();
                                     await db.collection("user").doc(_ngrant[index-_grant.length-2].uid).collection("group").doc(widget.groupKey).delete();
+                                    await db.collection("group").doc(widget.groupKey).collection("calendar").get().then(
+                                      (querySnapshot) async {
+                                        for (var docSnapshot in querySnapshot.docs) {
+                                          await db.collection("user").doc(_ngrant[index-_grant.length-2].uid).collection("calendar").doc(docSnapshot.id).delete().then((_) {},
+                                            onError: (e) => print("Error updating document $e"),
+                                          );
+                                        }
+                                      },
+                                      onError: (e) => print("Error completing: $e"),
+                                    );
                                     updateList();
                                     Navigator.of(context).pop();
                                   },

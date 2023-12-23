@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:onetwoday/MyAppBar.dart';
-import 'Tools/Color/Colors.dart';
-import 'Tools/Loading/Loading.dart';
+import '../Tools/Appbar/MyAppBar.dart';
+import '../Tools/Color/Colors.dart';
+import '../Tools/Loading/Loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'Tools/Dialog/DialogForm.dart';
+import '../Tools/Dialog/DialogForm.dart';
 
 class EnterRoom extends StatefulWidget {
   const EnterRoom({super.key});
@@ -128,6 +128,14 @@ class _EnterRoomState extends State<EnterRoom> {
                       };
                       db.collection("group").doc(textValue.toUpperCase()).collection('member').doc(user!.uid).set(memberData, SetOptions(merge: true));
                       db.collection("user").doc(user!.uid).collection('group').doc(textValue.toUpperCase()).set(userData, SetOptions(merge: true));
+                      db.collection("group").doc(textValue.toUpperCase()).collection("calendar").get().then(
+                        (querySnapshot) {
+                          for (var docSnapshot in querySnapshot.docs) {
+                            db.collection("user").doc(user!.uid).collection("calendar").doc(docSnapshot.id).set(docSnapshot.data(), SetOptions(merge: true));
+                          }
+                        },
+                        onError: (e) => print("Error completing: $e"),
+                      );
                       Navigator.of(context).popUntil(ModalRoute.withName('/homepage'));
                     }
                   }

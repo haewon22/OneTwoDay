@@ -5,11 +5,12 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:onetwoday/MyAppBar.dart';
+import '../../Tools/Appbar/MyAppBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'Tools/Color/Colors.dart';
+import '../../Tools/Color/Colors.dart';
+import '../../Tools/Dialog/DialogForm.dart';
 
 class AddNewNotice extends StatefulWidget {
   final String groupKey;
@@ -51,6 +52,17 @@ class _AddNewNoticeState extends State<AddNewNotice> {
   String? selectedDay_e = DateTime.now().day.toString() + "일";
   String? selectedHour_e = "0시";
   String? selectedMinute_e = "0분";
+
+  @override
+  void initState() {
+    db.collection("user").doc(user!.uid).collection("group").doc(widget.groupKey).snapshots().listen(
+      (event) {
+        if (event.data() == null) Future.delayed(Duration.zero, () {
+          if (mounted) DialogForm.dialogQuit(context);
+        });
+      }
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -3,12 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:onetwoday/GroupModify.dart';
-import 'package:onetwoday/MemberSettings.dart';
+import '../../Dashboard/Setting/GroupModify.dart';
+import '../../Dashboard/Setting/MemberSettings.dart';
 
-import 'Tools/Color/Colors.dart';
-import 'Tools/Dialog/DialogForm.dart';
-import 'Tools/Loading/Loading.dart';
+import '../../Tools/Color/Colors.dart';
+import '../../Tools/Dialog/DialogForm.dart';
+import '../../Tools/Loading/Loading.dart';
 
 class GroupSettings extends StatefulWidget {
   final String groupKey;
@@ -32,6 +32,13 @@ class _GroupSettingsState extends State<GroupSettings> {
   void initState() {
     updateGroup();
     updateAdmin();
+    db.collection("user").doc(user!.uid).collection("group").doc(widget.groupKey).snapshots().listen(
+      (event) {
+        if (event.data() == null) Future.delayed(Duration.zero, () {
+          if (mounted) DialogForm.dialogQuit(context);
+        });
+      }
+    );
   }
 
   void updateGroup() async {
@@ -281,6 +288,16 @@ class _GroupSettingsState extends State<GroupSettings> {
                                                     } else {
                                                       await db.collection("group").doc(widget.groupKey).collection("member").doc(user!.uid).delete();
                                                       await db.collection("user").doc(user!.uid).collection("group").doc(widget.groupKey).delete();
+                                                      await db.collection("group").doc(widget.groupKey).collection("calendar").get().then(
+                                                        (querySnapshot) async {
+                                                          for (var docSnapshot in querySnapshot.docs) {
+                                                            await db.collection("user").doc(user!.uid).collection("calendar").doc(docSnapshot.id).delete().then((_) {},
+                                                              onError: (e) => print("Error updating document $e"),
+                                                            );
+                                                          }
+                                                        },
+                                                        onError: (e) => print("Error completing: $e"),
+                                                      );
                                                       Navigator.of(context).popUntil(ModalRoute.withName('/homepage'));
                                                     }
                                                   },

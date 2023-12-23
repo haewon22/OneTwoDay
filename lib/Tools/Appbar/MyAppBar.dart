@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import './Tools/Color/Colors.dart';
-import 'GroupSettings.dart';
+import '../Color/Colors.dart';
+import '../../Dashboard/Setting/GroupSettings.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   MyAppBar({

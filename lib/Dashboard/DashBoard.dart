@@ -1,20 +1,21 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
-import 'package:onetwoday/MyAppBar.dart';
-import 'package:onetwoday/Mychatting.dart';
-import 'package:onetwoday/Mywriting.dart';
-import 'package:onetwoday/Tools/Color/Colors.dart';
+import '../Tools/Appbar/MyAppBar.dart';
+import '../Dashboard/Mychatting.dart';
+import '../Dashboard/Notice/Mywriting.dart';
+import '../Tools/Color/Colors.dart';
+import '../Tools/Dialog/DialogForm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'Calendar/Calendar.dart';
+import '../Home/Calendar/Calendar.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'Myboard.dart';
-import 'package:onetwoday/AddNewNotice.dart';
+import 'Notice/Myboard.dart';
+import '../Dashboard/Notice/AddNewNotice.dart';
 
 class DashBoard extends StatefulWidget {
   final String groupKey;
@@ -39,11 +40,20 @@ class _DashBoardState extends State<DashBoard> {
   double startX = 0.0;
   String direction = '';
 
+  List<Map<String, String>> schedule_show = [];
+  
+  Map<DateTime, List<String>> event = {};
+
+  List<String> _getEventsForDay(DateTime day) {
+    return event[day] ?? [];
+  }
+
   DateTime today = DateTime.now();
   void _onDaySelected(DateTime day, DateTime focusedDay) {
     setState(() {
       today = day;
     });
+    updateShow();
   }
 
   @override
@@ -63,11 +73,73 @@ class _DashBoardState extends State<DashBoard> {
   void initState() {
     updateGroup();
     updateNotice();
+    updateSchedule();
+    updateShow();
     db.collection("group").doc(widget.groupKey).collection("chat").snapshots().listen(
       (event) {
         updateChat();
       }
     );
+    db.collection("user").doc(user!.uid).collection("group").doc(widget.groupKey).snapshots().listen(
+      (event) {
+        if (event.data() == null) Future.delayed(Duration.zero, () {
+          if (mounted) DialogForm.dialogQuit(context);
+        });
+      }
+    );
+  }
+
+  void updateSchedule() async {
+    List<Map<String, String>> schedules = [];
+    Map<DateTime, List<String>> events = {};
+    await db.collection('group').doc(widget.groupKey).collection('calendar').get().then(
+      (querySnapshot) {
+        for (var docSnapshot in querySnapshot.docs) {
+          schedules.add({
+            "id": docSnapshot.id,
+            "title": docSnapshot.data()['title'],
+            "start": docSnapshot.data()['start'],
+            "end": docSnapshot.data()['end'],
+          });
+          int start_year = int.parse(DateFormat('yyyy').format(DateTime.parse(docSnapshot.data()['start'])));
+          int start_month = int.parse(DateFormat('MM').format(DateTime.parse(docSnapshot.data()['start'])));
+          int start_day = int.parse(DateFormat('dd').format(DateTime.parse(docSnapshot.data()['start'])));
+          int end_year = int.parse(DateFormat('yyyy').format(DateTime.parse(docSnapshot.data()['end'])));
+          int end_month = int.parse(DateFormat('MM').format(DateTime.parse(docSnapshot.data()['end'])));
+          int end_day = int.parse(DateFormat('dd').format(DateTime.parse(docSnapshot.data()['end'])));
+          if (events[DateTime.utc(start_year,start_month,start_day)] == null) events[DateTime.utc(start_year,start_month,start_day)] = [docSnapshot.data()['title']];
+          else events[DateTime.utc(start_year,start_month,start_day)]?.add(docSnapshot.data()['title']);
+          if (events[DateTime.utc(end_year,end_month,end_day)] == null) events[DateTime.utc(end_year,end_month,end_day)] = [docSnapshot.data()['title']];
+          else if (DateTime.utc(start_year,start_month,start_day) != DateTime.utc(end_year,end_month,end_day)) events[DateTime.utc(end_year,end_month,end_day)]?.add(docSnapshot.data()['title']);
+        }
+      },
+      onError: (e) => print("Error completing: $e"),
+    );
+    setState(() {
+      event = events;
+    });
+  }
+
+  void updateShow() async {
+    List<Map<String, String>> schedules = [];
+    await db.collection('group').doc(widget.groupKey).collection('calendar').orderBy("start").get().then(
+      (querySnapshot) {
+        for (var docSnapshot in querySnapshot.docs) {
+          if (DateFormat('yyyy-MM-dd').parse(docSnapshot.data()['start']) == DateFormat('yyyy-MM-dd').parse(today.toString())
+          || DateFormat('yyyy-MM-dd').parse(docSnapshot.data()['end']) == DateFormat('yyyy-MM-dd').parse(today.toString()))
+          schedules.add({
+            "id": docSnapshot.id,
+            "title": docSnapshot.data()['title'],
+            "start": docSnapshot.data()['start'],
+            "end": docSnapshot.data()['end'],
+          });
+        }
+      },
+      onError: (e) => print("Error completing: $e"),
+    );
+    setState(() {
+      schedule_show = schedules;
+    });
   }
 
   void updateGroup() {
@@ -367,8 +439,11 @@ class _DashBoardState extends State<DashBoard> {
                         "더보기  >",
                         style: TextStyle(fontSize: 12),
                       ),
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => Calendar(groupKey: widget.groupKey)));
+                      onTap: () async {
+                        await Navigator.of(context).push(MaterialPageRoute(builder: (context) => Calendar(groupKey: widget.groupKey))).then((_) {
+                          updateSchedule();
+                          updateShow();
+                        });
                       },
                     ),
                   ]
@@ -376,7 +451,7 @@ class _DashBoardState extends State<DashBoard> {
               ),
               Container(
                 margin: EdgeInsets.only(top: 10, bottom: 20),
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                padding: EdgeInsets.fromLTRB(15, 10, 15, 20),
                 width: mediaSize.width,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -386,6 +461,12 @@ class _DashBoardState extends State<DashBoard> {
                         weekendStyle: TextStyle(color: MainColors.blue)
                       ),
                       calendarStyle: CalendarStyle(
+                        markerSize: 4,
+                        markerMargin: EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+                        markerDecoration: BoxDecoration(
+                          color: MainColors.blue,
+                          shape: BoxShape.circle
+                        ),
                         defaultTextStyle: TextStyle(
                           fontSize: 12,
                           fontFamily: 'NanumSquareRound'
@@ -439,8 +520,11 @@ class _DashBoardState extends State<DashBoard> {
                       onDaySelected: _onDaySelected,
                       selectedDayPredicate: (day) => isSameDay(day, today),
                       headerVisible: false,
+                      eventLoader: _getEventsForDay,
                     ),
-                    Text("여기에 일정")
+                    Column(
+                      children: scheduleList()
+                    )
                   ],
                 ),
                 decoration: BoxDecoration(
@@ -558,5 +642,49 @@ class _DashBoardState extends State<DashBoard> {
         ),
       ),
     );
+  }
+
+  List<Widget> scheduleList() {
+    List<Widget> schedules = [];
+    for (int i = 0 ; i < schedule_show.length ; i++) {
+      schedules.add(Container(
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        child: Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(right: 15),
+              child: CircleAvatar(
+                radius: 7,
+                backgroundColor: MainColors.blue,
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 270,
+                  child: Text(
+                    '${schedule_show[i]["title"]}',
+                    style: TextStyle(
+                      overflow: TextOverflow.ellipsis,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  '${DateFormat('MM월 dd일 ').format(DateTime.parse(schedule_show[i]["start"]!)) + DateFormat('a hh:mm', 'ko').format(DateTime.parse(schedule_show[i]["start"]!))} 시작 · ${DateFormat('MM월 dd일 ').format(DateTime.parse(schedule_show[i]["end"]!)) + DateFormat('a hh:mm', 'ko').format(DateTime.parse(schedule_show[i]["end"]!))} 마감',
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Color.fromARGB(255, 90, 90, 90),
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ));
+    }
+    return schedules;
   }
 }

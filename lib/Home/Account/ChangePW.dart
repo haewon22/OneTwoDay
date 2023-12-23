@@ -1,36 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:onetwoday/MyAppBar.dart';
-import 'package:onetwoday/Tools/Color/Colors.dart';
+import '../../Tools/Appbar/MyAppBar.dart';
+import '../../Tools/Color/Colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'Tools/Dialog/DialogForm.dart';
-import 'Tools/Loading/Loading.dart';
+import '../../Tools/Dialog/DialogForm.dart';
+import '../../Tools/Loading/Loading.dart';
 
-class ChangeEmail extends StatefulWidget {
-  const ChangeEmail({super.key});
+class ChangePW extends StatefulWidget {
+  const ChangePW({super.key});
 
   @override
-  State<ChangeEmail> createState() => _ChangeEmailState();
+  State<ChangePW> createState() => _ChangePWState();
 }
 
-class _ChangeEmailState extends State<ChangeEmail> {
-  Map<String, String> _input = {'pw' : "", 'newemail' : ""};
-  bool _isFirstInput = true;
-  bool _isValidated = false;
-  bool _passwordVisible = false;
-  List<TextEditingController> textController = [TextEditingController(), TextEditingController()];
+class _ChangePWState extends State<ChangePW> {
+  Map<String, String> _input = {'pw' : "", 'newpw' : "", 'newrepw' : ""};
+  Map<String, bool> _isFirstInput = {'newpw' : true, 'newrepw' : true};
+  Map<String, bool> _isValidated = {'newpw' : false, 'newrepw' : false};
+  Map<String, bool> _passwordVisible = {'pw': false, 'newpw': false, 'newrepw': false};
+  List<TextEditingController> textController = [TextEditingController(), TextEditingController(), TextEditingController()];
   @override
   Widget build(BuildContext context) {
     var mediaSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: MyAppBar(appBar: AppBar(), title: "", groupS: false),
-      body: SingleChildScrollView(
-        child: GestureDetector(
-          onTap: () {
-            FocusScopeNode currentFocus = FocusScope.of(context);
-            if (!currentFocus.hasPrimaryFocus) {
-              currentFocus.unfocus();
-            }
-          },
+      body: GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: SingleChildScrollView(
           child: SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -39,7 +39,7 @@ class _ChangeEmailState extends State<ChangeEmail> {
                   height: 70,
                   margin: EdgeInsets.only(top: 15),
                   child: Text(
-                    "이메일 변경",
+                    "비밀번호 변경",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 30,
@@ -50,7 +50,7 @@ class _ChangeEmailState extends State<ChangeEmail> {
                 Container(
                   height: 60,
                   child: Text(
-                    "비밀번호를 입력하고\n새로운 이메일을 입력해주세요",
+                    "비밀번호를 입력하고\n새로운 비밀번호을 입력해주세요",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.black,
@@ -65,7 +65,7 @@ class _ChangeEmailState extends State<ChangeEmail> {
                     controller: textController[0],
                     autovalidateMode: AutovalidateMode.always,
                     cursorColor: Color(0xff585551),
-                    obscureText: !_passwordVisible,
+                    obscureText: !_passwordVisible['pw']!,
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       labelText: 'Password',
@@ -83,11 +83,11 @@ class _ChangeEmailState extends State<ChangeEmail> {
                       suffixIcon: GestureDetector(
                         onTap: () {
                           setState(() {
-                            _passwordVisible = !_passwordVisible;
+                            _passwordVisible['pw'] = !_passwordVisible['pw']!;
                           });
                         },
                         child: Icon(
-                          _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                          _passwordVisible['pw']! ? Icons.visibility : Icons.visibility_off,
                           color: Colors.grey
                         ),
                       ),
@@ -101,14 +101,15 @@ class _ChangeEmailState extends State<ChangeEmail> {
                 ),
                 Container(
                   height: 55,
-                  margin: EdgeInsets.fromLTRB(30, 20, 30, 0),
+                  margin: EdgeInsets.fromLTRB(30, 20, 30, 0), 
                   child: TextFormField(
                     controller: textController[1],
                     autovalidateMode: AutovalidateMode.always,
+                    obscureText: !_passwordVisible['newpw']!,
                     cursorColor: Color(0xff585551),
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                      labelText: 'New Email',
+                      labelText: 'New Password',
                       labelStyle: TextStyle(color: Colors.grey),
                       filled: true,
                       fillColor: Colors.white,
@@ -120,15 +121,22 @@ class _ChangeEmailState extends State<ChangeEmail> {
                         borderSide: BorderSide.none,
                         borderRadius: BorderRadius.circular(55),
                       ),
-                      disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(55),
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _passwordVisible['newpw'] = !_passwordVisible['newpw']!;
+                          });
+                        },
+                        child: Icon(
+                          _passwordVisible['newpw']! ? Icons.visibility : Icons.visibility_off,
+                          color: Colors.grey
+                        ),
                       ),
                     ),
-                    onChanged: (String value) { 
+                    onChanged: (String value) {
                       setState(() {
-                        if (!textController[1].text.isEmpty) _isFirstInput = false;
-                        _input['newemail'] = textController[1].text;
+                        if (!textController[1].text.isEmpty) _isFirstInput['newpw'] = false;
+                        _input['newpw'] = textController[1].text;
                       });
                     },
                   ),
@@ -137,7 +145,60 @@ class _ChangeEmailState extends State<ChangeEmail> {
                   margin: EdgeInsets.symmetric(horizontal: 50),
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    _emailValidator(_input['newemail']!),
+                    _pwValidator(_input['newpw']!),
+                    style: TextStyle(
+                      color: MainColors.blue,
+                      fontSize: 11.9
+                    ),
+                  )
+                ),
+                Container(
+                  height: 55,
+                  margin: EdgeInsets.fromLTRB(30, 5, 30, 0), 
+                  child: TextFormField(
+                    controller: textController[2],
+                    autovalidateMode: AutovalidateMode.always,
+                    obscureText: !_passwordVisible['newrepw']!,
+                    cursorColor: Color(0xff585551),
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      labelText: 'Re-New Password',
+                      labelStyle: TextStyle(color: Colors.grey),
+                      filled: true,
+                      fillColor: Colors.white,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(55),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(55),
+                      ),
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _passwordVisible['newrepw'] = !_passwordVisible['newrepw']!;
+                          });
+                        },
+                        child: Icon(
+                          _passwordVisible['newrepw']! ? Icons.visibility : Icons.visibility_off,
+                          color: Colors.grey
+                        ),
+                      ),
+                    ),
+                    onChanged: (String value) { 
+                      setState(() {
+                        if (!textController[2].text.isEmpty) _isFirstInput['newrepw'] = false;
+                        _input['newrepw'] = textController[2].text;
+                      });
+                    },
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 50),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    _repwValidator(_input['newrepw']!),
                     style: TextStyle(
                       color: MainColors.blue,
                       fontSize: 11.9
@@ -146,19 +207,19 @@ class _ChangeEmailState extends State<ChangeEmail> {
                 ),
                 GestureDetector(
                   onTap: () async {
-                    if (_isValidated && _input['pw']!.isNotEmpty) {
+                    if (_isValidated['newpw']! && _isValidated['newrepw']! && _input['pw']!.isNotEmpty) {
                       Loading.loadingPage(context, mediaSize.width);
                       final user = await FirebaseAuth.instance.currentUser;
                       final cred = EmailAuthProvider.credential(
                         email: user?.email ?? 'Unknown', password: _input['pw']!
                       );
                       await user!.reauthenticateWithCredential(cred).then((value) async {
-                        await user!.updateEmail(_input['newemail']!);
+                        await user!.updatePassword(_input['newpw']!);
                         Navigator.of(context).pop();
                         DialogForm.dialogForm(
                           context, mediaSize.width,
-                          "이메일 변경을 완료했어요",
-                          "앞으로 변경된 이메일로 사용해주세요"
+                          "비밀번호 변경을 완료했어요",
+                          "앞으로 변경된 비밀번호로 사용해주세요"
                         );
                       }).catchError((e) {
                         if (e.code == 'wrong-password') {
@@ -185,11 +246,11 @@ class _ChangeEmailState extends State<ChangeEmail> {
                     margin: EdgeInsets.fromLTRB(30, 5, 30, 30),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: _isValidated! && _input['pw']!.isNotEmpty ? MainColors.blue : Colors.grey,
+                      color: _isValidated['newpw']! && _isValidated['newrepw']! && _input['pw']!.isNotEmpty ? MainColors.blue : Colors.grey,
                       borderRadius: BorderRadius.circular(55)
                     ),
                     child: Text(
-                      "이메일 변경하기",
+                      "비밀번호 변경하기",
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w700
@@ -205,18 +266,34 @@ class _ChangeEmailState extends State<ChangeEmail> {
     );
   }
 
-  String _emailValidator(String value) {
-    if (_isFirstInput!) return "";
+  String _pwValidator(String value) {
+    if (_isFirstInput['newpw']!) return "";
     if (value.isEmpty) {
-      _isValidated = false;
-      return "이메일을 입력하세요";
+      _isValidated['newpw'] = false;
+      return "비밀번호를 입력하세요";
     }
-    if (!value.contains("@") || !value.contains(".")) {
-      _isValidated = false;
-      return "이메일 형식으로 입력하세요";
+    if (value.length < 8) {
+      _isValidated['newpw'] = false;
+      return "비밀번호를 8자 이상 입력하세요";
     }
     setState(() {
-      _isValidated = true;
+      _isValidated['newpw'] = true;
+    });
+    return "";
+  }
+
+  String _repwValidator(String value) {
+    if (_isFirstInput['newrepw']!) return "";
+    if (value.isEmpty) {
+      _isValidated['newrepw'] = false;
+      return "비밀번호를 다시 입력하세요";
+    }
+    if (value != _input['newpw']) {
+      _isValidated['newrepw'] = false;
+      return "위 비밀번호와 달라요";
+    }
+    setState(() {
+      _isValidated['newrepw'] = true;
     });
     return "";
   }

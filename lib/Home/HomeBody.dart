@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:onetwoday/Tools/Color/Colors.dart';
+import '../Tools/Color/Colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:onetwoday/GroupItem.dart';
-import 'package:onetwoday/ProfileDrawer.dart';
+import 'GroupItem.dart';
+import 'ProfileDrawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Calendar/Calendar.dart';
 

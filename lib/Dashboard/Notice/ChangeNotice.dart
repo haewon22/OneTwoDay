@@ -5,11 +5,12 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:onetwoday/MyAppBar.dart';
+import '../../Tools/Appbar/MyAppBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'Tools/Color/Colors.dart';
+import '../../Tools/Color/Colors.dart';
+import '../../Tools/Dialog/DialogForm.dart';
 
 class ChangeNotice extends StatefulWidget {
   final String groupKey;
@@ -136,6 +137,14 @@ class _ChangeNoticeState extends State<ChangeNotice> {
         });
       },
       onError: (e) => print("Error getting document: $e"),
+    );
+
+    db.collection("user").doc(user!.uid).collection("group").doc(widget.groupKey).snapshots().listen(
+      (event) {
+        if (event.data() == null) Future.delayed(Duration.zero, () {
+          if (mounted) DialogForm.dialogQuit(context);
+        });
+      }
     );
   }
 
@@ -427,22 +436,6 @@ class _ChangeNoticeState extends State<ChangeNotice> {
                   margin: EdgeInsets.fromLTRB(20, 20, 20, 30),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-// Map<String, dynamic> origin = {
-//   'title': "",
-//   'content': "",
-//   'isStartD': false,
-//   'isDueD': false,
-//   'selectedYear': "",
-//   'selectedMonth': "",
-//   'selectedDay': "",
-//   'selectedHour': "",
-//   'selectedMinute': "",
-//   'selectedYear_e': "",
-//   'selectedMonth_e': "",
-//   'selectedDay_e': "",
-//   'selectedHour_e': "",
-//   'selectedMinute_e': "",
-// };
                     color: !(
                       origin['title'] == textValue && 
                       origin['content'] == textValueForContent && 

@@ -5,9 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:onetwoday/MyAppBar.dart';
-import 'Tools/Color/Colors.dart';
-import 'Tools/Loading/Loading.dart';
+import '../Tools/Appbar/MyAppBar.dart';
+import '../Tools/Color/Colors.dart';
+import '../Tools/Loading/Loading.dart';
+import '../Tools/Dialog/DialogForm.dart';
 import 'package:lottie/lottie.dart';
 
 class Mychatting extends StatefulWidget {
@@ -47,6 +48,13 @@ class MychattingState extends State<Mychatting> {
     db.collection("group").doc(widget.groupKey).collection("chat").snapshots().listen(
       (event) {
         updateChat();
+      }
+    );
+    db.collection("user").doc(user!.uid).collection("group").doc(widget.groupKey).snapshots().listen(
+      (event) {
+        if (event.data() == null) Future.delayed(Duration.zero, () {
+          if (mounted) DialogForm.dialogQuit(context);
+        });
       }
     );
   }

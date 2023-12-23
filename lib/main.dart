@@ -9,14 +9,14 @@ import 'Login/forgotPW.dart';
 import 'Login/SignUp.dart';
 import 'Login/SignUpForm.dart';
 import 'Login/ProfileForm.dart';
-import 'HomePage.dart';
-import 'AccountSettings.dart';
-import 'ChangeEmail.dart';
-import 'ChangePW.dart';
-import 'ChangeProfile.dart';
-import 'DeleteAccount.dart';
-import 'CreateRoom.dart';
-import 'EnterRoom.dart';
+import 'Home/HomePage.dart';
+import 'Home/Account/AccountSettings.dart';
+import 'Home/Account/ChangeEmail.dart';
+import 'Home/Account/ChangePW.dart';
+import 'Home/Account/ChangeProfile.dart';
+import 'Home/Account/DeleteAccount.dart';
+import 'Home/CreateRoom.dart';
+import 'Home/EnterRoom.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
