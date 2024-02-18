@@ -1,6 +1,6 @@
-# onetwoday
+# OneTwoDay
 
-A new Flutter project.
+Application for Group Collaboration
 
 ## Getting Started
 
